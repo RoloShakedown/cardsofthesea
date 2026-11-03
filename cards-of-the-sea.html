@@ -1,0 +1,2427 @@
+<title>Cards of the Sea</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Alegreya:ital,wght@1,400;1,500&family=Alegreya+Sans:wght@400;500;700;800&display=swap">
+<style>
+  /* Layout: a chart table. Rival fleets across the top, your harbor and hand below, ship's log and rules down the side */
+  :root {
+    --bg: #e4d5b5;
+    --panel: #f4e9d1;
+    --panel-2: #ecdcbb;
+    --ink: #3a2814;
+    --ink-soft: #6e5636;
+    --edge: #b48a55;
+    --sea: #1d4e63;
+    --sea-ink: #f3e6c8;
+    --brass: #94621a;
+    --danger: #a3352a;
+    --glow: #d99a2b;
+    --shadow: rgba(58, 40, 20, 0.2);
+    --card: #fffaf0;
+    --card-edge: #cbb894;
+    /* Four-color deck in muted maritime inks. Card faces stay cream in both themes, so these don't change */
+    --card-H: #a8352c;
+    --card-D: #2c5688;
+    --card-C: #2f6e3a;
+    --card-S: #1f2329;
+    --card-joker: #7a4e8f;
+    /* Each player's color is their suit's color */
+    --s-H: #a8352c;
+    --s-D: #2c5688;
+    --s-C: #3a7344;
+    --s-S: #2c3138;
+    --water: #2f6f86;
+    --water-2: #22566a;
+    --water-ink: #eef6f2;
+    --foam: rgba(255, 255, 255, 0.16);
+    --surf: rgba(255, 255, 255, 0.6);
+    --sand: #efd9a2;
+    --sand-2: #cfa962;
+    --leaf: #3f7d3a;
+    --wood: #7a4a22;
+    --hull: #5e3818;
+    --sail: #fbf3df;
+    /* Chart table: parchment with faint survey lines and old stains */
+    --chart-line: rgba(110, 80, 40, 0.09);
+    --stain: rgba(150, 105, 45, 0.12);
+    --frame: rgba(120, 85, 40, 0.28);
+    --rope: #b08850;
+    --rope-2: #7d5a2c;
+    --water-hi: rgba(120, 200, 205, 0.35);
+    --shallow: rgba(110, 215, 200, 0.45);
+    --sea-2: #123545;
+    --f-display: "Pirata One", "Georgia", serif;
+    --f-body: "Alegreya Sans", "Segoe UI", system-ui, sans-serif;
+    --f-log: "Alegreya", "Georgia", serif;
+    --wave-t: 0s;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1b22; --panel: #172a33; --panel-2: #1d3540; --ink: #eadcbc; --ink-soft: #a99878;
+      --edge: #5f4a2e; --sea: #08131a; --sea-ink: #eadcbc; --brass: #d9a54a; --danger: #e8806e;
+      --glow: #f0b850; --shadow: rgba(0, 0, 0, 0.45);
+      --s-H: #d9776a; --s-D: #7ba3d6; --s-C: #79b37f; --s-S: #b9c0c9;
+      --water: #143c4c; --water-2: #0c2a36; --water-ink: #d9e8e6; --foam: rgba(190, 225, 240, 0.1);
+      --surf: rgba(190, 225, 240, 0.35); --sand: #c2a463; --sand-2: #94773f; --leaf: #4f9a48;
+      --wood: #8b5a2b; --hull: #4e2f15; --sail: #e9dfc6;
+      --chart-line: rgba(150, 190, 210, 0.06); --stain: rgba(120, 170, 200, 0.05); --frame: rgba(200, 165, 100, 0.22);
+      --rope: #8d6a3a; --rope-2: #5c4222; --water-hi: rgba(80, 150, 170, 0.25); --shallow: rgba(70, 160, 150, 0.35);
+      --sea-2: #050d12;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1b22; --panel: #172a33; --panel-2: #1d3540; --ink: #eadcbc; --ink-soft: #a99878;
+    --edge: #5f4a2e; --sea: #08131a; --sea-ink: #eadcbc; --brass: #d9a54a; --danger: #e8806e;
+    --glow: #f0b850; --shadow: rgba(0, 0, 0, 0.45);
+    --s-H: #d9776a; --s-D: #7ba3d6; --s-C: #79b37f; --s-S: #b9c0c9;
+    --water: #143c4c; --water-2: #0c2a36; --water-ink: #d9e8e6; --foam: rgba(190, 225, 240, 0.1);
+    --surf: rgba(190, 225, 240, 0.35); --sand: #c2a463; --sand-2: #94773f; --leaf: #4f9a48;
+    --wood: #8b5a2b; --hull: #4e2f15; --sail: #e9dfc6;
+    --chart-line: rgba(150, 190, 210, 0.06); --stain: rgba(120, 170, 200, 0.05); --frame: rgba(200, 165, 100, 0.22);
+    --rope: #8d6a3a; --rope-2: #5c4222; --water-hi: rgba(80, 150, 170, 0.25); --shallow: rgba(70, 160, 150, 0.35);
+    --sea-2: #050d12;
+    color-scheme: dark;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse 50% 35% at 15% 8%, var(--stain), transparent 70%),
+      radial-gradient(ellipse 40% 30% at 88% 65%, var(--stain), transparent 70%),
+      repeating-linear-gradient(0deg, transparent 0 79px, var(--chart-line) 79px 80px),
+      repeating-linear-gradient(90deg, transparent 0 79px, var(--chart-line) 79px 80px),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  /* A faint compass rose printed on the chart, behind everything */
+  body::before {
+    content: "";
+    position: fixed;
+    right: -60px;
+    bottom: -60px;
+    width: 420px;
+    height: 420px;
+    background: var(--ink);
+    opacity: 0.06;
+    pointer-events: none;
+    -webkit-mask: var(--compass) center / contain no-repeat;
+    mask: var(--compass) center / contain no-repeat;
+  }
+  :root {
+    --compass: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='black'%3E%3Ccircle cx='50' cy='50' r='47' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='50' r='42' stroke-width='.8'/%3E%3Ccircle cx='50' cy='50' r='12' stroke-width='.8'/%3E%3C/g%3E%3Cpolygon points='50,3 55,45 97,50 55,55 50,97 45,55 3,50 45,45'/%3E%3Cpolygon transform='rotate(45 50 50)' points='50,16 53,47 84,50 53,53 50,84 47,53 16,50 47,47'/%3E%3C/svg%3E");
+  }
+  .app {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+  h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: 0.01em; }
+
+  /* Top bar and hand tray are dark ship's planking with brass fittings, the same in both themes */
+  .topbar, .tray {
+    --plank-ink: #f1e2c0;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 21px, rgba(0, 0, 0, 0.2) 21px 22px),
+      radial-gradient(ellipse 40% 120% at 20% 50%, rgba(255, 220, 160, 0.06), transparent 70%),
+      linear-gradient(180deg, #4d311b, #33200f);
+    color: var(--plank-ink);
+  }
+  .topbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding: 9px max(16px, env(safe-area-inset-right, 0px)) 9px max(16px, env(safe-area-inset-left, 0px));
+    border-bottom: 3px solid #1f1209;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+  }
+  .brand { font-size: 1.7rem; line-height: 1; color: #e9b450; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45); white-space: nowrap; }
+  .brand::before {
+    content: "";
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    margin-right: 0.3em;
+    vertical-align: -0.08em;
+    background: #e9b450;
+    -webkit-mask: var(--compass) center / contain no-repeat;
+    mask: var(--compass) center / contain no-repeat;
+  }
+  .turn-banner { flex: 1 1 220px; text-align: center; font-family: var(--f-display); font-size: 1.35rem; line-height: 1.15; }
+  .turn-banner .who { color: #e9b450; }
+  .tools { display: flex; flex-wrap: wrap; gap: 6px; }
+  .topbar .btn, .tray .btn:not(.primary) {
+    background: rgba(0, 0, 0, 0.22);
+    color: var(--plank-ink);
+    border-color: #a87c33;
+    box-shadow: none;
+  }
+  .topbar .btn { padding: 6px 11px; font-size: 0.88rem; }
+  .topbar .btn:hover:not(:disabled), .tray .btn:not(.primary):hover:not(:disabled) { background: rgba(255, 255, 255, 0.08); }
+  .topbar .btn[aria-expanded="true"] { background: rgba(233, 180, 80, 0.22); }
+  @media (max-width: 600px) {
+    .topbar { gap: 6px 10px; padding-block: 7px; }
+    .brand { font-size: 1.3rem; }
+    .turn-banner { font-size: 1.1rem; flex-basis: 140px; text-align: right; }
+    .tools { gap: 4px; }
+    .topbar .btn { padding: 4px 8px; font-size: 0.78rem; }
+  }
+
+  /* ---------- The shared sea ---------- */
+  .board { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .sea {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px max(16px, env(safe-area-inset-right, 0px)) 26px max(16px, env(safe-area-inset-left, 0px));
+    background:
+      radial-gradient(ellipse 65% 45% at 50% 48%, var(--water-hi), transparent 75%),
+      linear-gradient(180deg, var(--water) 0%, var(--water-2) 100%);
+    box-shadow: inset 0 0 80px rgba(0, 15, 25, 0.55);
+    color: var(--water-ink);
+  }
+  .rivals { display: flex; flex-wrap: wrap; justify-content: space-evenly; align-items: flex-start; gap: 22px 30px; }
+  .midsea { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px 26px; }
+  .home { display: flex; justify-content: center; margin-top: auto; }
+
+  /* Each captain's waters: a pennant, their face-down hand, then island and fleet side by side */
+  .territory {
+    --sc: var(--edge);
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    min-width: 0;
+    max-width: 100%;
+    transition: opacity 0.4s ease, filter 0.4s ease;
+  }
+  .territory.out { opacity: 0.45; filter: grayscale(0.7); }
+  /* The captain whose turn it is gets a pool of light on their water */
+  .territory::before {
+    content: "";
+    position: absolute;
+    inset: -18px -26px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255, 232, 170, 0.2), transparent 68%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .territory.current::before { opacity: 1; }
+  .flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 26px 4px 6px;
+    background: var(--sc);
+    color: var(--bg);
+    font-family: var(--f-display);
+    font-size: 1.3rem;
+    line-height: 1.1;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 13px) 50%, 100% 100%, 0 100%);
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+    transform-origin: 0 50%;
+  }
+  .flag .badge { background: var(--bg); color: var(--sc); width: 1.5rem; height: 1.5rem; font-size: 0.9rem; }
+  .territory.current .flag { animation: flutter 1.8s ease-in-out infinite; }
+  @keyframes flutter { 50% { transform: skewY(-2.5deg) scaleX(1.03); } }
+  .holdings { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 16px; max-width: 100%; }
+  .armada { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 8px; }
+  .armada:empty { display: none; }
+  .fan-row { display: flex; align-items: flex-end; gap: 8px; min-height: 2.5rem; }
+  .fan-row .meta { font-size: 0.8rem; opacity: 0.85; }
+  /* What's left of an island: rocks in the surf */
+  .shoal { display: grid; justify-items: center; gap: 2px; padding: 4px 8px; font-size: 0.78rem; font-style: italic; opacity: 0.85; }
+  .shoal svg { width: 78px; height: 30px; }
+
+  /* Mid-channel: the draw pile, the discard pile and the latest news */
+  .pile { display: grid; justify-items: center; gap: 4px; font: inherit; color: var(--water-ink); background: none; border: 0; padding: 0; }
+  .pile-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); font-variant-numeric: tabular-nums; }
+  .stack { position: relative; width: 3.3rem; height: 4.6rem; }
+  .stack .back { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stack .back:nth-child(2) { transform: translate(-2px, 2px); }
+  .stack .back:nth-child(3) { transform: translate(-4px, 4px); }
+  button.pile:not(:disabled) { cursor: pointer; }
+  button.pile:not(:disabled) .stack { animation: beckon 1.4s ease-in-out infinite; }
+  @keyframes beckon { 50% { filter: drop-shadow(0 0 8px var(--glow)); transform: translateY(-3px); } }
+  .slot { width: 3.3rem; height: 4.6rem; box-sizing: border-box; border: 2px dashed rgba(255, 255, 255, 0.35); border-radius: 7px; }
+  /* The last round at a glance: a fixed height so nothing below it moves, scrolled to the newest line */
+  .ticker {
+    flex: 1 1 420px;
+    max-width: 560px;
+    height: 9.6rem;
+    overflow-y: auto;
+    margin: 0;
+    padding: 8px 12px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: var(--panel);
+    color: var(--ink);
+    border-radius: 4px;
+    font-family: var(--f-log);
+    font-style: italic;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 0 0 3px var(--panel), inset 0 0 0 4px var(--frame);
+    scrollbar-width: thin;
+  }
+  .ticker li { padding-left: 8px; border-left: 3px solid var(--sc, var(--frame)); }
+  .ticker li:first-child { margin-top: auto; }
+  .ticker li.old { opacity: 0.55; }
+  .ticker li.hit { border-left-color: var(--danger); font-weight: 700; }
+  .ticker li.turn-start { margin-top: 5px; }
+  .ticker .cl { font-family: var(--f-body); font-style: normal; }
+
+  /* Brief news of something destroyed; it fades on its own and never needs a click */
+  .notices { position: fixed; left: 50%; top: 70px; z-index: 13; transform: translateX(-50%); display: grid; justify-items: center; gap: 6px; pointer-events: none; width: max-content; max-width: calc(100vw - 32px); }
+  .notice {
+    padding: 7px 16px;
+    background: var(--panel);
+    color: var(--ink);
+    border-radius: 4px;
+    border-left: 5px solid var(--sc);
+    font-family: var(--f-display);
+    font-size: 1.15rem;
+    line-height: 1.2;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 0 0 1px var(--frame);
+    animation: notice-in 0.3s ease-out;
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .notice.mine { border-left-color: var(--danger); }
+  .notice.gone { opacity: 0; transform: translateY(-8px); }
+  .notice .cl { font-family: var(--f-body); }
+  @keyframes notice-in { from { opacity: 0; transform: translateY(-10px); } }
+  .still .notice { animation: none; transition: opacity 0.6s; }
+  .still .notice.gone { transform: none; }
+
+  /* ---------- Your hand tray ---------- */
+  .tray {
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    display: grid;
+    gap: 4px;
+    padding: 6px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    border-top: 3px solid #1f1209;
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.35);
+  }
+  /* The hint and button rows keep a fixed height whatever they hold, so the hand never shifts */
+  .tray-head { display: grid; justify-items: center; font-size: 0.85rem; text-align: center; }
+  .tray-head .count { font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.72rem; color: #e9b450; }
+  .tray .hint { margin: 0; color: #e6d5b0; font-size: 0.9rem; line-height: 1.35; height: 2.7em; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .tray .hint span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tray .hint b { color: #fff3d6; }
+  .tray .actions { justify-content: center; align-content: flex-start; height: 40px; }
+  @media (max-width: 600px) {
+    .tray .hint { font-size: 0.82rem; }
+    .tray .actions { gap: 5px; height: 72px; }
+    .tray .actions .btn { padding: 6px 9px; font-size: 0.82rem; }
+  }
+  /* Cards overlap more as the hand grows, so any hand fits the tray */
+  .hand { display: flex; justify-content: center; align-items: flex-end; container-type: inline-size; padding: 18px 0 4px; min-height: 5.6rem; }
+  .hand > .card { width: 3.6rem; height: 5rem; margin-left: clamp(-2.5rem, calc((100cqw - var(--n) * 3.6rem) / max(1, var(--n) - 1)), 0.3rem); }
+  .hand > .card:first-child { margin-left: 0; }
+  .hand > .empty { color: #e6d5b0; }
+
+  /* ---------- Drawers for the log and rules ---------- */
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 15;
+    width: min(360px, 92vw);
+    box-sizing: border-box;
+    padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    border-radius: 0;
+    overflow-y: auto;
+    transform: translateX(105%);
+    visibility: hidden;
+    transition: transform 0.28s ease, visibility 0s linear 0.28s;
+  }
+  .drawer.open { transform: none; visibility: visible; transition: transform 0.28s ease, visibility 0s; }
+  .drawer-close { float: right; }
+  .drawer .log { max-height: none; }
+  .sound-controls { display: grid; gap: 16px; margin-top: 6px; }
+  .sound-controls label { display: grid; gap: 6px; font-weight: 700; font-size: 0.92rem; }
+  .sound-controls label.check { display: flex; align-items: center; gap: 8px; }
+  .sound-controls input { accent-color: #b17b26; }
+  .sound-controls input[type="range"] { width: 100%; }
+  .sound-controls input[type="checkbox"] { width: 1.1rem; height: 1.1rem; }
+  .sound-controls .btn { justify-self: start; }
+  .sound-controls p { margin: 0; font-size: 0.85rem; color: var(--ink-soft); }
+
+  /* Parchment sheets with a printed double frame, like a sea chart */
+  .panel {
+    background:
+      radial-gradient(ellipse 60% 40% at 90% 10%, var(--stain), transparent 70%),
+      radial-gradient(ellipse 50% 50% at 5% 95%, var(--stain), transparent 70%),
+      var(--panel);
+    box-shadow: inset 0 0 0 4px var(--panel), inset 0 0 0 5px var(--frame), -6px 0 24px rgba(0, 0, 0, 0.35);
+  }
+  .badge {
+    display: inline-grid;
+    place-items: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: var(--sc);
+    color: var(--bg);
+    font-size: 1rem;
+    flex: none;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; min-height: 2rem; }
+  .empty { font-size: 0.85rem; color: var(--ink-soft); font-style: italic; padding-block: 4px; }
+  .sea .empty { color: var(--water-ink); opacity: 0.8; }
+  .tag {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 2px 8px; border-radius: 999px; background: var(--sc); color: var(--bg);
+  }
+  .tag.sunk { background: var(--ink-soft); }
+
+  /* Cards */
+  .card {
+    width: 3.3rem;
+    height: 4.6rem;
+    box-sizing: border-box;
+    border-radius: 7px;
+    /* Aged parchment, warmer toward the edges */
+    background: radial-gradient(ellipse 85% 75% at 50% 42%, #fffaf0 0%, #f7ecd3 62%, #e8d4aa 100%);
+    border: 1px solid #b4955f;
+    color: var(--card-S);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px 5px;
+    font-family: var(--f-body);
+    font-weight: 800;
+    box-shadow: 0 1px 2px var(--shadow);
+    position: relative;
+    flex: none;
+    /* --arc and --rot fan the hand; --lift raises a card on hover or selection */
+    transform: translateY(calc(var(--arc, 0px) + var(--lift, 0px))) rotate(var(--rot, 0deg));
+    transform-origin: 50% 100%;
+    transition: transform 140ms ease, box-shadow 140ms ease;
+  }
+  /* A thin printed frame inside the edge */
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border: 1px solid rgba(120, 88, 40, 0.3);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+  .card .r { font-size: 1rem; line-height: 1; text-align: left; display: flex; flex-direction: column; position: relative; }
+  .card .r small { font-size: 0.75rem; }
+  .card .s { font-size: 2rem; line-height: 1; align-self: center; margin-bottom: 1px; }
+  .card .face { width: 2.15rem; height: 2.15rem; align-self: center; margin-bottom: -1px; }
+  .card.ace .s {
+    display: grid; place-items: center; width: 1.85rem; height: 1.85rem; font-size: 1.3rem; margin-bottom: 3px;
+    border: 1.5px solid currentColor; border-radius: 50%; box-shadow: inset 0 0 0 2px #f7ecd3, inset 0 0 0 3px currentColor;
+  }
+  .card.suit-H { color: var(--card-H); }
+  .card.suit-D { color: var(--card-D); }
+  .card.suit-C { color: var(--card-C); }
+  .card.suit-S { color: var(--card-S); }
+  .card.joker { color: var(--card-joker); border-color: var(--card-joker); }
+  .card.joker .r { font-size: 0.66rem; letter-spacing: 0.04em; }
+  .card.mini { width: 2.5rem; height: 3.4rem; padding: 3px 4px; }
+  .card.mini .r { font-size: 0.85rem; }
+  .card.mini.joker .r { font-size: 0.5rem; }
+  .card.mini .s { font-size: 1.35rem; }
+  .card.mini .face { width: 1.6rem; height: 1.6rem; }
+  .card.mini.ace .s { width: 1.4rem; height: 1.4rem; font-size: 0.95rem; }
+
+  /* Card back: a brass compass rose on a navy weave. Used for rivals' face-down hands. */
+  .back {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #c99a3a;
+    background:
+      radial-gradient(circle, rgba(201, 154, 58, 0.9) 0 1.2px, transparent 1.6px) center / 100% 100% no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23c99a3a'%3E%3Ccircle cx='50' cy='50' r='44' stroke-width='3'/%3E%3C/g%3E%3Cpolygon fill='%23c99a3a' points='50,8 56,44 92,50 56,56 50,92 44,56 8,50 44,44'/%3E%3C/svg%3E") center / 78% no-repeat,
+      repeating-linear-gradient(45deg, #1f4256 0 3px, #19374a 3px 6px);
+    box-shadow: inset 0 0 0 2px #19374a, inset 0 0 0 3px rgba(201, 154, 58, 0.55), 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  .fan { display: flex; align-items: flex-end; padding: 4px 0 0 1rem; height: 2.4rem; }
+  .fan .back { width: 1.55rem; height: 2.15rem; margin-left: -1rem; transform: rotate(var(--r)); transform-origin: 50% 130%; flex: none; }
+  /* Card names in the log and reports, tinted by suit */
+  .cl { font-weight: 800; white-space: nowrap; }
+  .cl-H { color: var(--s-H); } .cl-D { color: var(--s-D); } .cl-C { color: var(--s-C); } .cl-S { color: var(--s-S); }
+  .card.own::after {
+    content: ""; position: absolute; left: 4px; right: 4px; bottom: -1px; height: 4px;
+    border-radius: 3px 3px 0 0; background: var(--sc);
+  }
+  button.card { cursor: pointer; }
+  button.card:hover { --lift: -6px; z-index: 2; }
+  .card.sel { --lift: -16px; z-index: 1; box-shadow: 0 0 0 3px var(--glow), 0 8px 14px var(--shadow); }
+  button.card.sel:hover { --lift: -18px; }
+  .targetable {
+    outline: 3px dashed var(--danger);
+    outline-offset: 2px;
+    animation: bob 1.2s ease-in-out infinite;
+  }
+  @keyframes bob { 50% { transform: translateY(-3px); } }
+
+  /* Two layers of swell drift across the whole sea at different speeds, with a scatter of sun glints.
+     The sea element itself is never redrawn, so these run continuously. */
+  .sea::before, .sea::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .sea::before {
+    left: 0;
+    right: -200px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='44'%3E%3Cpath d='M0 22 Q25 9 50 22 T100 22 T150 22 T200 22' fill='none' stroke='white' stroke-opacity='.12' stroke-width='2'/%3E%3C/svg%3E") 0 0 / 200px 44px;
+    animation: drift-200 26s linear infinite;
+  }
+  .sea::after {
+    left: -120px;
+    right: 0;
+    background:
+      radial-gradient(1.7px 1.7px at 26px 16px, rgba(255, 255, 255, 0.8), transparent),
+      radial-gradient(1.2px 1.2px at 88px 52px, rgba(255, 255, 255, 0.6), transparent),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='64'%3E%3Cpath d='M0 48 Q15 40 30 48 T60 48 T90 48 T120 48' fill='none' stroke='white' stroke-opacity='.08' stroke-width='1.5'/%3E%3C/svg%3E");
+    background-size: 120px 64px;
+    animation: drift-back-120 17s linear infinite, glint 4s ease-in-out infinite alternate;
+  }
+  @keyframes drift-200 { to { transform: translateX(-200px); } }
+  @keyframes drift-back-120 { to { transform: translateX(120px); } }
+  @keyframes glint { from { opacity: 0.55; } to { opacity: 1; } }
+
+  /* Islands: a sandy shore with a palm, cards sit on the beach */
+  .isle {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: flex-start;
+    padding: 12px 18px 14px 48px;
+    min-height: 4.4rem;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    /* Speckled sand, a white surf line, then turquoise shallows fading into deep water */
+    background:
+      radial-gradient(circle, rgba(110, 70, 25, 0.16) 0.8px, transparent 1.3px) 0 0 / 7px 7px,
+      radial-gradient(circle, rgba(255, 250, 230, 0.35) 0.8px, transparent 1.3px) 3px 4px / 9px 9px,
+      radial-gradient(ellipse at 45% 35%, var(--sand) 55%, var(--sand-2) 100%);
+    border-radius: 38px 56px 44px 30px / 30px 40px 46px 36px;
+    box-shadow:
+      0 0 0 2px var(--surf),
+      0 0 0 9px var(--shallow),
+      0 0 0 14px var(--foam),
+      0 8px 18px rgba(0, 20, 30, 0.35);
+    margin: 12px 12px 12px 10px;
+  }
+  .loss-pick { padding-top: 14px; }
+  .isle .palm { position: absolute; left: 7px; bottom: 9px; width: 38px; height: 52px; }
+
+  /* Ships: drawn hulls and sails, sails take the ship's suit color */
+  .ship {
+    font: inherit;
+    color: var(--water-ink);
+    text-align: center;
+    background: none;
+    border: 0;
+    border-radius: 10px;
+    padding: 0 2px 2px;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    width: 9.5rem;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  button.ship { cursor: pointer; }
+  /* Ships ride the swell: rise, roll, and settle */
+  .ship-art { width: 100%; height: auto; display: block; transform-origin: 50% 85%; animation: swell 5s ease-in-out infinite; animation-delay: var(--wave-t); }
+  .ship:nth-child(2n) .ship-art { animation-delay: calc(var(--wave-t) - 2.2s); }
+  @keyframes swell {
+    0%, 100% { transform: translateY(0) rotate(-1.8deg); }
+    25% { transform: translateY(-3px) rotate(0deg); }
+    50% { transform: translateY(-1px) rotate(1.8deg); }
+    75% { transform: translateY(2px) rotate(0deg); }
+  }
+  .ship-name { font-family: var(--f-display); font-size: 1.15rem; line-height: 1; }
+  .ship-meta { font-size: 0.78rem; opacity: 0.85; font-variant-numeric: tabular-nums; }
+  .pips { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+  .pips i { width: 8px; height: 8px; border-radius: 2px; background: var(--sc); box-shadow: 0 0 0 1px var(--surf); }
+  .reinforceable { outline: 3px dashed var(--glow); outline-offset: 2px; }
+  /* The Motion button turns off all movement, ambient and action alike */
+  .still .ship-art, .still .targetable, .still .sea::before, .still .sea::after, .still .territory.current .flag,
+  .still button.pile .stack, .still .card.arrive, .still .ship.arrive { animation: none !important; }
+  .still .card { transition: none; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ---------- Animation layer ---------- */
+  .fx { position: fixed; inset: 0; z-index: 12; pointer-events: none; overflow: hidden; }
+  .flyer { position: absolute; left: 0; top: 0; will-change: transform; }
+  .flyer .card, .flyer .back { width: 3.3rem; height: 4.6rem; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35); }
+  .ball { display: block; width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #7a7a7a, #121212 70%); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+  .burst { position: absolute; width: 0; height: 0; }
+  .burst i { position: absolute; left: 0; top: 0; border-radius: 50%; transform: translate(-50%, -50%); }
+  .burst .flash { width: 80px; height: 80px; background: radial-gradient(circle, #fff7d6 0%, #ffbf55 30%, rgba(214, 84, 30, 0.7) 55%, transparent 70%); animation: blast 0.55s ease-out forwards; }
+  .burst .smoke { width: 110px; height: 110px; background: radial-gradient(circle, rgba(70, 60, 55, 0.55), transparent 65%); animation: smoke 1s ease-out forwards; }
+  .burst .ring { width: 22px; height: 22px; border: 3px solid rgba(255, 255, 255, 0.9); animation: ring 0.75s ease-out forwards; }
+  .burst .ring + .ring { animation-delay: 0.12s; opacity: 0; }
+  .burst .drop { width: 6px; height: 6px; background: #eafcff; animation: drop 0.65s ease-out forwards; }
+  .burst .spark { width: 6px; height: 6px; background: #ffd77a; box-shadow: 0 0 6px #ffcf5a; animation: drop 0.6s ease-out forwards; }
+  .burst.radar .ring { border-color: #8fe3a2; animation-duration: 1.1s; }
+  .burst.gold .ring { border-color: #ffd77a; }
+  @keyframes blast { from { transform: translate(-50%, -50%) scale(0.2); opacity: 1; } to { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+  @keyframes smoke { from { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; } to { transform: translate(-50%, -80%) scale(1.6); opacity: 0; } }
+  @keyframes ring { from { transform: translate(-50%, -50%) scale(0.3); opacity: 1; } to { transform: translate(-50%, -50%) scale(4); opacity: 0; } }
+  @keyframes drop {
+    0% { transform: translate(-50%, -50%); opacity: 1; }
+    50% { transform: translate(calc(-50% + var(--dx) * 0.6), calc(-50% + var(--dy))); opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + 16px)); opacity: 0; }
+  }
+  /* New arrivals settle into place after their flight */
+  .card.arrive { animation: settle 0.45s ease-out both; }
+  .ship.arrive { animation: sail-in 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+  @keyframes settle { from { transform: translateY(-10px) scale(1.12); box-shadow: 0 0 0 3px var(--glow); } }
+  @keyframes sail-in { from { transform: translateY(26px) scale(0.55); opacity: 0; } 60% { opacity: 1; } }
+
+  .btn {
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--edge);
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: inset 0 -2px 0 var(--frame);
+  }
+  .btn:hover:not(:disabled) { background: var(--panel-2); }
+  /* Polished brass */
+  .btn.primary {
+    background: linear-gradient(180deg, #dcae55 0%, #b17b26 55%, #8f5f17 100%);
+    border-color: #6f4810;
+    color: #2a1904;
+    text-shadow: 0 1px 0 rgba(255, 235, 190, 0.45);
+    box-shadow: inset 0 1px 0 rgba(255, 240, 200, 0.55), 0 1px 3px var(--shadow);
+  }
+  .btn.primary:hover:not(:disabled) { filter: brightness(1.08); background: linear-gradient(180deg, #dcae55 0%, #b17b26 55%, #8f5f17 100%); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn.small { padding: 3px 9px; font-size: 0.85rem; }
+  button:focus-visible { outline: 3px solid var(--glow); outline-offset: 2px; }
+
+  /* Drawer contents */
+  .panel { border: 1px solid var(--edge); min-width: 0; }
+  .panel h2 { font-size: 1.4rem; margin-bottom: 8px; }
+  /* A length of rope under each side heading */
+  .panel h2::after {
+    content: "";
+    display: block;
+    height: 5px;
+    margin-top: 4px;
+    border-radius: 3px;
+    background: repeating-linear-gradient(-55deg, var(--rope) 0 4px, var(--rope-2) 4px 6px);
+  }
+  /* The ship's log reads like a handwritten logbook */
+  .log { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 320px; overflow-y: auto; font-family: var(--f-log); font-style: italic; font-size: 0.95rem; line-height: 1.35; }
+  .log li { padding: 0 0 5px 10px; border-left: 3px solid var(--lc, var(--edge)); border-bottom: 1px dashed var(--frame); }
+  .log .cl { font-family: var(--f-body); font-style: normal; }
+  .rules { display: grid; gap: 4px; }
+  .rules details { border-top: 1px solid var(--edge); padding-block: 6px; }
+  .rules details:first-of-type { border-top: 0; }
+  .rules summary { cursor: pointer; font-weight: 800; }
+  .rules p, .rules ul { margin: 6px 0 0; font-size: 0.88rem; }
+  .rules ul { padding-left: 18px; }
+
+  /* Dialog */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 18, 24, 0.55);
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    z-index: 20;
+  }
+  .modal[hidden] { display: none; }
+  .sheet {
+    background:
+      radial-gradient(ellipse 60% 40% at 85% 0%, var(--stain), transparent 70%),
+      var(--panel);
+    color: var(--ink);
+    border: 1px solid var(--edge);
+    border-top: 6px solid var(--brass);
+    outline: 1px solid var(--frame);
+    outline-offset: -6px;
+    border-radius: 12px;
+    padding: 18px 20px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: grid;
+    gap: 14px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  }
+  .sheet h2 { font-size: 1.8rem; }
+  .sheet p { margin: 0; }
+  .sheet fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .sheet legend { font-weight: 800; margin-bottom: 6px; }
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+  .choice { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border: 1px solid var(--edge); border-radius: 8px; cursor: pointer; }
+  .choice:has(input:checked) { background: var(--panel-2); box-shadow: 0 0 0 2px var(--glow); }
+  .ability-list { display: grid; gap: 8px; }
+  .ability-list button { text-align: left; display: grid; gap: 2px; }
+  .ability-list span { font-weight: 400; font-size: 0.86rem; color: var(--ink-soft); }
+  .radar { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .radar li { display: flex; align-items: center; gap: 10px; }
+  .radar li span { flex: 1; font-size: 0.88rem; color: var(--ink-soft); }
+
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <h1 class="brand">Cards of the Sea</h1>
+    <div class="turn-banner" id="status" aria-live="polite"></div>
+    <nav class="tools" aria-label="Game menu">
+      <button class="btn" type="button" data-drawer="drawer-log" aria-expanded="false">Ship's log</button>
+      <button class="btn" type="button" data-drawer="drawer-rules" aria-expanded="false">How to play</button>
+      <button class="btn" id="btn-motion" type="button" aria-pressed="true">Motion on</button>
+      <button class="btn" type="button" data-drawer="drawer-sound" aria-expanded="false" id="btn-sound">Sound</button>
+      <button class="btn" id="btn-new" type="button">New game</button>
+    </nav>
+  </header>
+
+  <!-- One shared ocean: rivals across the top, the deck in mid-channel, your island at the bottom, your hand in the tray -->
+  <div class="board" id="board">
+    <main class="sea">
+      <div class="rivals" id="rivals"></div>
+      <div class="midsea" id="midsea"></div>
+      <div class="home" id="you"></div>
+    </main>
+    <section class="tray" id="tray" aria-label="Your hand"></section>
+  </div>
+</div>
+
+<aside class="drawer panel" id="drawer-sound" aria-label="Sound">
+  <button class="btn small drawer-close" type="button" data-close>Close</button>
+  <h2>Sound</h2>
+  <div class="sound-controls">
+    <label class="check"><input type="checkbox" id="snd-on"> Sound on</label>
+    <label>Cannons, cards and effects <input type="range" id="snd-fx" min="0" max="1" step="0.05"></label>
+    <label>Sea, gulls and creaking timbers <input type="range" id="snd-sea" min="0" max="1" step="0.05"></label>
+    <button class="btn small" type="button" id="snd-test">Fire a test cannon</button>
+    <p>Browsers start sound only after your first click on the page.</p>
+  </div>
+</aside>
+<aside class="drawer panel" id="drawer-log" aria-label="Ship's log">
+  <button class="btn small drawer-close" type="button" data-close>Close</button>
+  <h2>Ship's log</h2>
+  <ul class="log" id="log"></ul>
+</aside>
+<aside class="drawer panel rules" id="drawer-rules" aria-label="How to play">
+        <button class="btn small drawer-close" type="button" data-close>Close</button>
+        <h2>How to play</h2>
+        <details open>
+          <summary>Objective</summary>
+          <p>Be the last player with an active Main Island card or ship. Knock rivals out by destroying all of their island cards and ships.</p>
+        </details>
+        <details>
+          <summary>Setup</summary>
+          <ul>
+            <li>Each player takes a suit. Their 2, 8 and Q of that suit start face-up as their Main Island.</li>
+            <li>Two Jokers are shuffled into the deck. Everyone is dealt 7 cards.</li>
+            <li>Aces are low (1). J = 11, Q = 12, K = 13. A card's strength is its value.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Your turn</summary>
+          <p>Draw 1 card, then choose one action: Build, Attack, Cycle or Pass.</p>
+        </details>
+        <details>
+          <summary>Build</summary>
+          <ul>
+            <li><b>Fortify:</b> put a card of your island's suit on your Main Island.</li>
+            <li><b>Launch a ship:</b> play a set of 3 to 6 cards of one suit that isn't your island's suit. The ship takes that suit. Each card in it is one hit it can take.</li>
+            <li><b>Reinforce a ship:</b> add 1 or more cards of a ship's suit to that ship, including one that's been damaged. A ship holds at most 6 cards. The launch bonus doesn't trigger again.</li>
+            <li><b>Island lost:</b> once your Main Island is destroyed, you can't rebuild it, launch new ships or reinforce the ships you have. You keep your surviving ships and can still attack, cycle or pass.</li>
+            <li>When a ship launches, pick one bonus. <b>Destroyer:</b> 1 free attack. <b>Supply Boat:</b> draw 2 extra cards. <b>Radar Ship:</b> look at and reorder the top N cards of the draw pile, where N is the number of players.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Attack</summary>
+          <ul>
+            <li><b>Same-Suit Strike:</b> discard a higher card of the island card's suit.</li>
+            <li><b>Matching-Value Strike:</b> discard a card of the same value in another suit to destroy an island card.</li>
+            <li><b>Off-Suit Volley:</b> discard cards not of the target's suit, all at once. Each deals 1 damage, and you need damage equal to the island card's value.</li>
+            <li><b>Attacking ships:</b> each card of the ship's suit knocks 1 card off the ship, whatever its value. Every 2 off-suit cards knock off 1, and they can be any mix of other suits. The attacker chooses which cards come off, and they go to the discard pile. Damage stays, so you can wear a ship down over several turns. It sinks when its last card is gone.</li>
+            <li><b>Several same-suit cards</b> can attack together, adding their values. A 10♠ and 3♠ together destroy a K♠.</li>
+            <li><b>No mixing:</b> one attack uses only cards of the target's suit, or only off-suit cards, never both.</li>
+            <li><b>Joker:</b> destroy any card or ship. Or place it on your Main Island, where it acts as a King of your suit. It can be destroyed by any King, cards of your suit adding up to 13 or more, a 13-card off-suit volley, or the other Joker.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Cycle and Pass</summary>
+          <ul>
+            <li><b>Cycle:</b> after drawing, discard exactly 3 cards and draw 3 new cards from the top of the deck. This uses your action for the turn.</li>
+            <li><b>Pass:</b> do nothing.</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Discards and winning</summary>
+          <p>Destroyed cards and used attack cards go to the discard pile. When the draw pile runs out, the discard pile is shuffled into a new deck. The last player with an island card or ship wins.</p>
+        </details>
+</aside>
+
+<!-- Flying cards, cannonballs and splashes are drawn here, above the board -->
+<div class="fx" id="fx" aria-hidden="true"></div>
+<div class="notices" id="notices" role="status" aria-live="polite"></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div id="modal-body"></div>
+    <div class="actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<script>
+  const $ = s => document.querySelector(s);
+  const SUITS = {
+    H: { sym: "♥", name: "Hearts" },
+    D: { sym: "♦", name: "Diamonds" },
+    C: { sym: "♣", name: "Clubs" },
+    S: { sym: "♠", name: "Spades" }
+  };
+  const SUIT_ORDER = "HDCS";
+  const SHIPS = {
+    destroyer: { name: "Destroyer", desc: "Make 1 free attack right away." },
+    supply: { name: "Supply Boat", desc: "Draw 2 extra cards right away." },
+    radar: { name: "Radar Ship", desc: "Look at the top N cards of the draw pile and put them back in any order (N = number of players)." }
+  };
+  const STRIKE_NAMES = {
+    "same-suit": "a Same-Suit Strike",
+    "match": "a Matching-Value Strike",
+    "volley": "an Off-Suit Volley",
+    "joker": "a Joker"
+  };
+
+  let G = null;
+  let uid = 0;
+
+  // ---------- Sound effects, synthesized with the Web Audio API ----------
+
+  // Everything is generated live: shaped noise and tones, run through a synthetic reverb ("sound carrying
+  // over open water") and a soft echo. Effects and the ambient sea have their own volume levels.
+  const Sound = (() => {
+    let ctx = null, master, fxBus, seaBus, grit, verb, echo, white, brown, sea = null;
+    const prefs = { muted: false, fx: 0.8, sea: 0.45 };
+    try {
+      Object.assign(prefs, JSON.parse(localStorage.getItem("cots-sound") || "{}"));
+      if (localStorage.getItem("cots-muted") === "1") prefs.muted = true; // setting from earlier versions
+    } catch (e) {}
+    const save = () => { try { localStorage.setItem("cots-sound", JSON.stringify(prefs)); localStorage.removeItem("cots-muted"); } catch (e) {} };
+    const rnd = (a, b) => a + Math.random() * (b - a);
+
+    function build() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      ctx = new AC();
+      const comp = ctx.createDynamicsCompressor();
+      comp.threshold.value = -14;
+      comp.ratio.value = 4;
+      master = ctx.createGain();
+      master.connect(comp).connect(ctx.destination);
+      fxBus = ctx.createGain();
+      fxBus.connect(master);
+      seaBus = ctx.createGain();
+      seaBus.connect(master);
+
+      // Grit: soft-clipping for blasts. It adds overtones, so the low boom still reads on small laptop speakers
+      grit = ctx.createWaveShaper();
+      const curve = new Float32Array(1024);
+      for (let i = 0; i < curve.length; i++) curve[i] = Math.tanh(3.2 * (i / (curve.length - 1) * 2 - 1));
+      grit.curve = curve;
+      grit.oversample = "4x";
+      const gritOut = ctx.createGain();
+      gritOut.gain.value = 0.6;
+      grit.connect(gritOut).connect(fxBus);
+
+      // Noise is generated once and reused: white for hiss and splashes, brown (deep rumble) for the sea
+      const len = ctx.sampleRate * 3;
+      white = ctx.createBuffer(1, len, ctx.sampleRate);
+      brown = ctx.createBuffer(1, len, ctx.sampleRate);
+      const w = white.getChannelData(0), b = brown.getChannelData(0);
+      let last = 0;
+      for (let i = 0; i < len; i++) {
+        w[i] = Math.random() * 2 - 1;
+        last = (last + 0.02 * w[i]) / 1.02;
+        b[i] = last * 3.5;
+      }
+
+      // Reverb: a decaying burst of noise used as the "room", here a wide stretch of sea
+      verb = ctx.createConvolver();
+      const irLen = Math.floor(ctx.sampleRate * 2.4);
+      const ir = ctx.createBuffer(2, irLen, ctx.sampleRate);
+      for (let ch = 0; ch < 2; ch++) {
+        const d = ir.getChannelData(ch);
+        for (let i = 0; i < irLen; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / irLen, 3.2);
+      }
+      verb.buffer = ir;
+      const verbOut = ctx.createGain();
+      verbOut.gain.value = 0.55;
+      verb.connect(verbOut).connect(fxBus);
+
+      // Echo: one soft repeat, darker each time, like a boom bouncing off a far shore
+      echo = ctx.createDelay(1);
+      echo.delayTime.value = 0.34;
+      const dark = ctx.createBiquadFilter();
+      dark.type = "lowpass";
+      dark.frequency.value = 1200;
+      const feedback = ctx.createGain();
+      feedback.gain.value = 0.3;
+      const echoOut = ctx.createGain();
+      echoOut.gain.value = 0.5;
+      echo.connect(dark).connect(feedback).connect(echo);
+      dark.connect(echoOut).connect(fxBus);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) ctx.suspend();
+        else ctx.resume();
+      });
+      levels();
+      return true;
+    }
+
+    function levels() {
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      master.gain.setTargetAtTime(prefs.muted ? 0 : 1, t, 0.05);
+      fxBus.gain.setTargetAtTime(prefs.fx, t, 0.05);
+      seaBus.gain.setTargetAtTime(prefs.sea * 0.7, t, 0.3);
+    }
+
+    // A note's volume shape (fast rise, smooth decay), sent to a bus plus optional reverb and echo
+    function voice(start, dur, vol, { attack = 0.005, rev = 0.15, ech = 0, bus = fxBus } = {}) {
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(vol, start + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+      g.connect(bus);
+      if (rev) { const s = ctx.createGain(); s.gain.value = rev; g.connect(s).connect(verb); }
+      if (ech) { const s = ctx.createGain(); s.gain.value = ech; g.connect(s).connect(echo); }
+      return g;
+    }
+
+    // Pull the sea down for a moment so a blast sits clear of it
+    function duck(t, hold) {
+      const start = ctx.currentTime + t, full = prefs.sea * 0.7;
+      seaBus.gain.setTargetAtTime(full * 0.35, start, 0.02);
+      seaBus.gain.setTargetAtTime(full, start + hold, 0.6);
+    }
+
+    function tone(freq, { t = 0, dur = 0.2, vol = 0.2, type = "sine", to = null, detune = 0, ...v } = {}) {
+      const start = ctx.currentTime + t;
+      const o = ctx.createOscillator();
+      o.type = type;
+      o.detune.value = detune;
+      o.frequency.setValueAtTime(freq, start);
+      if (to) o.frequency.exponentialRampToValueAtTime(to, start + dur);
+      o.connect(voice(start, dur, vol, v));
+      o.start(start);
+      o.stop(start + dur + 0.05);
+    }
+
+    function noise({ t = 0, dur = 0.3, vol = 0.3, type = "bandpass", freq = 1000, to = null, q = 1, deep = false, ...v } = {}) {
+      const start = ctx.currentTime + t;
+      const src = ctx.createBufferSource();
+      src.buffer = deep ? brown : white;
+      src.loop = true;
+      const f = ctx.createBiquadFilter();
+      f.type = type;
+      f.Q.value = q;
+      f.frequency.setValueAtTime(freq, start);
+      if (to) f.frequency.exponentialRampToValueAtTime(to, start + dur);
+      src.connect(f).connect(voice(start, dur, vol, v));
+      src.start(start, Math.random() * 2);
+      src.stop(start + dur + 0.05);
+    }
+
+    // A short tune played on a squeezebox: a soft triangle lead doubled by a slightly detuned reedy voice
+    function shanty(t, notes, step) {
+      notes.forEach((m, i) => {
+        const f = 440 * 2 ** ((m - 69) / 12);
+        const dur = i === notes.length - 1 ? 1.1 : step * 1.15;
+        tone(f, { t: t + i * step, dur, vol: 0.13, type: "triangle", rev: 0.35, attack: 0.03 });
+        tone(f, { t: t + i * step, dur, vol: 0.035, type: "sawtooth", detune: 9, rev: 0.35, attack: 0.04 });
+        tone(f / 2, { t: t + i * step, dur, vol: 0.05, type: "triangle", rev: 0.2, attack: 0.03 });
+      });
+    }
+
+    const effects = {
+      tick: t => tone(2200, { t, dur: 0.04, vol: 0.05, type: "triangle", rev: 0 }),
+      // A card whisked through the air, and one landing on the pile or in a hand
+      flick: t => noise({ t, dur: 0.09, vol: 0.1, type: "highpass", freq: 2500, to: 6500, rev: 0 }),
+      draw: t => {
+        noise({ t, dur: 0.12, vol: 0.13, freq: 3200, to: 1500, q: 0.7, rev: 0.05 });
+        noise({ t: t + 0.07, dur: 0.07, vol: 0.18, type: "lowpass", freq: 900, rev: 0 });
+      },
+      // A stone set into the island, then a little chime
+      fortify: t => {
+        tone(110, { t, dur: 0.28, vol: 0.45, to: 58, rev: 0.12 });
+        noise({ t, dur: 0.14, vol: 0.22, type: "lowpass", freq: 700, rev: 0 });
+        [1318, 1760].forEach((f, i) => tone(f, { t: t + 0.06 + i * 0.08, dur: 1, vol: 0.06, type: "triangle", rev: 0.55 }));
+      },
+      // A hull sliding into the water and a short rising call on the squeezebox
+      launch: t => {
+        noise({ t, dur: 1.1, vol: 0.22, freq: 450, to: 1800, q: 0.5, attack: 0.3, rev: 0.25 });
+        effects.splash(t + 0.3, 0.5);
+        shanty(t + 0.15, [67, 71, 74], 0.13);
+      },
+      // A sharp crack of powder, a gritty blast with a chest-thump under it, then thunder rolling off across the water
+      cannon: t => {
+        duck(t, 1.4);
+        const p = rnd(0.9, 1.1);
+        noise({ t, dur: 0.035, vol: 0.75, freq: 2600 * p, q: 0.8, rev: 0.3 });
+        noise({ t, dur: 0.02, vol: 0.4, type: "highpass", freq: 5500, rev: 0.2 });
+        tone(150 * p, { t, dur: 0.55, vol: 0.95, to: 36, attack: 0.002, rev: 0.25, bus: grit });
+        tone(240 * p, { t, dur: 0.2, vol: 0.3, type: "triangle", to: 75, attack: 0.002, rev: 0.2 });
+        noise({ t, dur: 1.1, vol: 0.8, type: "lowpass", freq: 3200, to: 140, attack: 0.003, rev: 0.5, ech: 0.55, bus: grit });
+        noise({ t: t + 0.05, dur: 2.4, vol: 0.55, type: "lowpass", freq: 420, to: 55, attack: 0.12, rev: 0.6, ech: 0.35, deep: true });
+      },
+      // A heavy blow, stone and timber cracking apart, splinters flying, then rubble tumbling into the surf
+      crash: t => {
+        tone(170, { t, dur: 0.5, vol: 0.85, to: 40, attack: 0.002, rev: 0.3, bus: grit });
+        noise({ t, dur: 0.06, vol: 0.65, freq: 1900, q: 1, rev: 0.3 });
+        noise({ t, dur: 0.85, vol: 0.6, type: "lowpass", freq: 3800, to: 200, attack: 0.003, rev: 0.4, ech: 0.3, bus: grit });
+        noise({ t: t + 0.04, dur: 1.6, vol: 0.4, type: "lowpass", freq: 380, to: 60, attack: 0.08, rev: 0.5, deep: true });
+        for (let i = 0; i < 12; i++) {
+          noise({ t: t + 0.02 + rnd(0, 0.5), dur: rnd(0.02, 0.07), vol: rnd(0.15, 0.32), freq: rnd(1200, 5200), q: rnd(4, 9), rev: 0.25 });
+        }
+        for (let i = 0; i < 8; i++) {
+          const d = t + rnd(0.25, 1.15), v = rnd(0.12, 0.28) * (1 - i / 12);
+          noise({ t: d, dur: rnd(0.05, 0.1), vol: v, type: "lowpass", freq: rnd(500, 900), rev: 0.3 });
+          tone(rnd(180, 380), { t: d, dur: 0.08, vol: v * 0.6, type: "triangle", to: rnd(90, 150), rev: 0.3 });
+        }
+      },
+      // A cannonball slamming into a hull: a deep wooden thunk, splintering planks, spray off the side
+      hull: t => {
+        tone(190, { t, dur: 0.4, vol: 0.8, type: "triangle", to: 62, attack: 0.002, rev: 0.3, bus: grit });
+        noise({ t, dur: 0.14, vol: 0.55, freq: 850, q: 2.5, rev: 0.3 });
+        noise({ t, dur: 0.5, vol: 0.35, type: "lowpass", freq: 2600, to: 220, rev: 0.35, ech: 0.25, bus: grit });
+        for (let i = 0; i < 9; i++) {
+          noise({ t: t + 0.02 + rnd(0, 0.35), dur: rnd(0.02, 0.06), vol: rnd(0.14, 0.28), freq: rnd(1400, 4800), q: rnd(4, 9), rev: 0.25 });
+        }
+        effects.splash(t + 0.12, 0.55);
+      },
+      // A wash of spray, a low whump, then drops pattering back down
+      splash: (t, size = 1) => {
+        noise({ t, dur: 0.9 * size + 0.25, vol: 0.45 * size, freq: 2600, to: 360, q: 0.6, attack: 0.02, rev: 0.3 });
+        tone(140, { t, dur: 0.3, vol: 0.3 * size, to: 58, rev: 0.1 });
+        for (let i = 0; i < 6 * size; i++) {
+          tone(rnd(500, 900), { t: t + rnd(0.25, 0.85), dur: 0.07, vol: 0.05, to: rnd(1100, 1700), rev: 0.3 });
+        }
+      },
+      // The splash, then timbers groaning and air bubbling up as the hull goes under
+      sink: t => {
+        effects.splash(t, 1);
+        tone(rnd(85, 100), { t: t + 0.15, dur: 1.5, vol: 0.09, type: "sawtooth", to: 46, rev: 0.45, attack: 0.2 });
+        for (let i = 0; i < 10; i++) {
+          tone(rnd(240, 560), { t: t + 0.55 + i * rnd(0.08, 0.17), dur: 0.09, vol: 0.07, to: rnd(700, 1300), rev: 0.3 });
+        }
+      },
+      // A sonar ping with a long fading tail
+      radar: t => [0, 0.65].forEach((d, i) => tone(1420, { t: t + d, dur: 0.55, vol: 0.16 / (i + 1), rev: 0.9, ech: 0.4 })),
+      // A ship's bell: a struck note with clanging overtones, rung twice
+      rival: t => [0, 0.3].forEach((d, k) =>
+        [[880, 0.18], [2210, 0.06], [3520, 0.03], [1320, 0.05]].forEach(([f, v]) =>
+          tone(f, { t: t + d, dur: 1.6, vol: v * (k ? 0.6 : 1), attack: 0.002, rev: 0.5 }))),
+      win: t => shanty(t, [62, 66, 69, 74, 71, 74, 78], 0.19),
+      lose: t => { shanty(t, [69, 65, 62, 57], 0.34); effects.rival(t + 1.5); }
+    };
+
+    // The ambient sea: a deep wash of swell rising and falling every few seconds, a lighter hiss of foam,
+    // and now and then a gull or the creak of a ship's timbers
+    const seaVoice = (freq, o) => tone(freq, { ...o, bus: seaBus });
+    function gull() {
+      for (let i = 0; i < 3; i++) {
+        const t = i * 0.32;
+        seaVoice(rnd(1250, 1400), { t, dur: 0.11, vol: 0.05, type: "triangle", to: rnd(1750, 1950), rev: 0.5 });
+        seaVoice(1850, { t: t + 0.09, dur: 0.2, vol: 0.045, type: "triangle", to: rnd(1050, 1200), rev: 0.5 });
+      }
+    }
+    const creak = () => seaVoice(rnd(95, 130), { dur: 0.9, vol: 0.035, type: "sawtooth", to: rnd(70, 95), attack: 0.25, rev: 0.25 });
+
+    function startSea() {
+      if (!ctx || sea) return;
+      const loop = (buf, type, freq) => {
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.loop = true;
+        const f = ctx.createBiquadFilter();
+        f.type = type;
+        f.frequency.value = freq;
+        const g = ctx.createGain();
+        src.connect(f).connect(g).connect(seaBus);
+        src.start(0, Math.random() * 3);
+        return g;
+      };
+      const swell = loop(brown, "lowpass", 420);
+      const foam = loop(white, "highpass", 1900);
+      swell.gain.value = 0.5;
+      foam.gain.value = 0.03;
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 1 / 7.5;
+      const swellDepth = ctx.createGain();
+      swellDepth.gain.value = 0.35;
+      const foamDepth = ctx.createGain();
+      foamDepth.gain.value = 0.025;
+      lfo.connect(swellDepth).connect(swell.gain);
+      lfo.connect(foamDepth).connect(foam.gain);
+      lfo.start();
+      sea = true;
+      const now = () => {
+        if (!document.hidden && !prefs.muted && prefs.sea > 0) (Math.random() < 0.55 ? gull : creak)();
+        setTimeout(now, rnd(12000, 28000));
+      };
+      setTimeout(now, rnd(6000, 12000));
+    }
+
+    return {
+      // Browsers only allow audio after the player clicks or presses a key
+      unlock() {
+        if (!ctx && !build()) return;
+        if (ctx.state === "suspended") ctx.resume();
+        startSea();
+      },
+      prefs,
+      get muted() { return prefs.muted; },
+      set(key, value) { prefs[key] = value; save(); levels(); },
+      toggle() { prefs.muted = !prefs.muted; save(); levels(); return prefs.muted; },
+      play(name, delay = 0) {
+        if (prefs.muted || !ctx || ctx.state === "closed") return;
+        try { effects[name](delay); } catch (e) {}
+      }
+    };
+  })();
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const alive = () => G.players.filter(p => !p.out);
+  const assets = p => p.island.length + p.ships.length;
+  // A Joker on an island defends as a King of the island owner's suit
+  const strength = c => c.joker ? 13 : c.rank;
+  const islandSuit = t => t.card.joker ? t.owner.suit : t.card.suit;
+  const rankLabel = r => ({ 1: "A", 11: "J", 12: "Q", 13: "K" })[r] || String(r);
+  const cardLabel = c => c.joker ? "Joker" : rankLabel(c.rank) + SUITS[c.suit].sym;
+  const who = p => p.human ? "You" : p.name;
+  const poss = p => p.human ? "your" : p.name + "'s";
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function makeDeck() {
+    const d = [];
+    for (const s of SUIT_ORDER) for (let r = 1; r <= 13; r++) d.push({ id: ++uid, suit: s, rank: r });
+    d.push({ id: ++uid, joker: true, rank: 0 }, { id: ++uid, joker: true, rank: 0 });
+    return d;
+  }
+
+  function sortHand(p) {
+    const group = c => c.joker ? 6 : c.suit === p.suit ? -1 : SUIT_ORDER.indexOf(c.suit);
+    p.hand.sort((a, b) => group(a) - group(b) || a.rank - b.rank);
+  }
+
+  // Each entry remembers its order (n), which turn it happened in (t) and whose turn that was (tp)
+  function log(msg, p) {
+    G.logCount++;
+    G.log.unshift({ msg, suit: p ? p.suit : null, n: G.logCount, t: G.turnStarts.length, tp: G.turn });
+    if (G.log.length > 80) G.log.pop();
+  }
+
+  // ---------- Setup ----------
+
+  function newGame(mySuit, rivals) {
+    const suits = [mySuit, ...SUIT_ORDER.split("").filter(s => s !== mySuit)].slice(0, rivals + 1);
+    const deck = makeDeck();
+    const players = suits.map((s, i) => ({
+      id: i, human: i === 0, suit: s,
+      name: i === 0 ? "You" : "Captain " + SUITS[s].name,
+      hand: [], island: [], ships: [], out: false
+    }));
+    for (const p of players) {
+      for (const r of [2, 8, 12]) {
+        const idx = deck.findIndex(c => c.suit === p.suit && c.rank === r);
+        p.island.push(deck.splice(idx, 1)[0]);
+      }
+    }
+    shuffle(deck);
+    for (let k = 0; k < 7; k++) for (const p of players) p.hand.push(deck.pop());
+    players.forEach(sortHand);
+    G = { players, deck, discard: [], turn: 0, mode: "wait", selected: new Set(), log: [], logCount: 0, turnStarts: [], over: false, fresh: new Set() };
+    log(`A new voyage begins. You sail under ${SUITS[mySuit].name} against ${rivals} rival captain${rivals > 1 ? "s" : ""}.`);
+    startTurn();
+  }
+
+  // ---------- Core rules ----------
+
+  function draw(p, n) {
+    let got = 0;
+    for (let i = 0; i < n; i++) {
+      if (!G.deck.length) {
+        if (!G.discard.length) break;
+        G.deck = shuffle(G.discard);
+        G.discard = [];
+        log("The draw pile ran dry. The discard pile was shuffled into a new deck.");
+      }
+      p.hand.push(G.deck.pop());
+      got++;
+    }
+    sortHand(p);
+    return got;
+  }
+
+  // Draw, and mark the new cards so they settle into the hand with a little flourish
+  function drawFresh(p, n) {
+    const had = new Set(p.hand.map(c => c.id));
+    const got = draw(p, n);
+    for (const c of p.hand) if (!had.has(c.id)) markFresh("c" + c.id);
+    return got;
+  }
+
+  function markFresh(key) {
+    const g = G;
+    g.fresh.add(key);
+    setTimeout(() => g.fresh.delete(key), 1000);
+  }
+
+  function drawPhase(p) {
+    const got = drawFresh(p, 1);
+    if (got) Sound.play("draw");
+    log(got ? `${who(p)} drew a card.` : `${who(p)} had nothing to draw. The deck and discard pile are empty.`, p);
+  }
+
+  function removeFromHand(p, cards) {
+    const ids = new Set(cards.map(c => c.id));
+    p.hand = p.hand.filter(c => !ids.has(c.id));
+  }
+
+  function attackKind(cards, t) {
+    if (!cards.length) return null;
+    if (cards.some(c => c.joker)) return cards.length === 1 ? "joker" : null;
+    // Ships are worn down card by card: each ship-suit card knocks off 1, each pair of off-suit cards knocks off 1.
+    // An attack can't use more cards than the ship has left to lose.
+    if (t.kind === "ship") {
+      const left = t.ship.cards.length;
+      const onSuit = cards.filter(c => c.suit === t.ship.suit).length;
+      if (onSuit === cards.length) return cards.length <= left ? "same-suit" : null;
+      if (onSuit === 0) return cards.length % 2 === 0 && cards.length / 2 <= left ? "volley" : null;
+      return null;
+    }
+    const suit = islandSuit(t);
+    const need = strength(t.card);
+    if (cards.length === 1 && cards[0].suit !== suit && cards[0].rank === need) return "match";
+    // Suits can't be mixed: either all cards match the target's suit and add their values,
+    // or none do and each counts for 1
+    const onSuit = cards.filter(c => c.suit === suit);
+    if (onSuit.length === cards.length) {
+      return onSuit.reduce((d, c) => d + c.rank, 0) >= need ? "same-suit" : null;
+    }
+    if (onSuit.length === 0) return cards.length >= need ? "volley" : null;
+    return null;
+  }
+
+  // How many cards an attack knocks off a ship
+  function shipHits(cards, ship) {
+    if (cards[0].joker) return ship.cards.length;
+    return cards[0].suit === ship.suit ? cards.length : cards.length / 2;
+  }
+
+  function targetName(t) {
+    return t.kind === "island"
+      ? `${poss(t.owner)} island card ${cardLabel(t.card)}`
+      : `${poss(t.owner)} ${shipName(t.ship)}`;
+  }
+
+  const shipName = s => `${SHIPS[s.ability].name} ${SUITS[s.suit].sym}`;
+
+  // Once a Main Island is destroyed it can't be rebuilt, and ships can't be launched or reinforced.
+  // The player can still attack, cycle or pass, and keeps the ships they have.
+  const hasIsland = p => p.island.length > 0;
+  const SHIP_MAX = 6;
+
+  function canFortify(p, c) {
+    return hasIsland(p) && (c.joker || c.suit === p.suit);
+  }
+
+  // A ship is a set of 3 to 6 cards of one suit that isn't your island's suit
+  function canLaunch(p, cards) {
+    return hasIsland(p) && cards.length >= 3 && cards.length <= SHIP_MAX && cards.every(c => !c.joker && c.suit === cards[0].suit && c.suit !== p.suit);
+  }
+
+  // Cards of one suit can be added to any of your ships of that suit, up to 6 cards a ship, while your island stands
+  function reinforceShips(p, cards) {
+    if (!hasIsland(p) || !cards.length || !cards.every(c => !c.joker && c.suit === cards[0].suit)) return [];
+    return p.ships.filter(s => s.suit === cards[0].suit && s.cards.length + cards.length <= SHIP_MAX);
+  }
+
+  // Why a selection that matches one of your ships can't be added to it, if that's the case
+  function refitBlocked(p, cards) {
+    if (cards.length > SHIP_MAX && hasIsland(p) && cards.every(c => !c.joker && c.suit === cards[0].suit && c.suit !== p.suit)) return `Ships hold at most ${SHIP_MAX} cards.`;
+    if (!cards.length || !p.ships.some(s => cards.every(c => !c.joker && c.suit === s.suit))) return "";
+    if (!hasIsland(p)) return "Without an island, ships can't be reinforced.";
+    return `Ships hold at most ${SHIP_MAX} cards.`;
+  }
+
+  function reinforce(p, ship, cards) {
+    removeFromHand(p, cards);
+    ship.cards.push(...cards);
+    Sound.play("launch");
+    log(`${who(p)} reinforced ${poss(p)} ${shipName(ship)} with ${cards.map(cardLabel).join(" + ")}, bringing it to ${ship.cards.length} cards.`, p);
+  }
+
+  function fortify(p, card) {
+    removeFromHand(p, [card]);
+    p.island.push(card);
+    Sound.play("fortify");
+    const note = card.joker ? " as a defense card" : "";
+    log(`${who(p)} fortified ${poss(p)} Main Island with ${cardLabel(card)}${note}.`, p);
+  }
+
+  function launch(p, cards, ability) {
+    removeFromHand(p, cards);
+    const ship = { id: ++uid, cards, ability, suit: cards[0].suit };
+    p.ships.push(ship);
+    Sound.play("launch");
+    log(`${who(p)} launched a ${shipName(ship)} with ${cards.length} cards.`, p);
+    return ship;
+  }
+
+  // Supply Boat and Radar Ship bonuses happen once, at launch. The Destroyer's attack is handled by the caller.
+  async function shipBonus(p, ability) {
+    const game = G;
+    if (ability === "supply") {
+      await FX.draw(p, 2);
+      if (G !== game) return;
+      const got = drawFresh(p, 2);
+      if (got) Sound.play("draw");
+      log(`${who(p)} drew ${got ? `${got} extra card${got === 1 ? "" : "s"}` : "nothing"} from the Supply Boat.`, p);
+    } else if (ability === "radar") {
+      // Too few cards left for a full sweep: shuffle the discard pile in underneath the remaining cards
+      if (G.deck.length < G.players.length && G.discard.length) {
+        G.deck = [...shuffle(G.discard), ...G.deck];
+        G.discard = [];
+        log("The draw pile ran low. The discard pile was shuffled in underneath for the Radar sweep.");
+      }
+      const n = Math.min(G.players.length, G.deck.length);
+      if (!n) return;
+      Sound.play("radar");
+      await FX.radar();
+      if (G !== game) return;
+      if (p.human) await radarModal(n);
+      else aiRadar(p, n);
+    }
+  }
+
+  // Cycle is an action: discard exactly 3 cards and draw 3 from the top of the deck
+  function cycle(p, cards) {
+    removeFromHand(p, cards);
+    G.discard.push(...cards);
+    const got = drawFresh(p, cards.length);
+    Sound.play("draw");
+    const n = cards.length;
+    log(`${who(p)} cycled ${n} card${n > 1 ? "s" : ""}${p.human ? ` (${cards.map(cardLabel).join(", ")})` : ""} and drew ${got} new card${got === 1 ? "" : "s"}.`, p);
+  }
+
+  // Rival captains knock the highest cards off a ship
+  function aiPickLosses(ship, hits) {
+    return [...ship.cards].sort((a, b) => b.rank - a.rank).slice(0, hits);
+  }
+
+  // The attacker chooses which ship cards are knocked off (lost); rivals pick their own
+  function resolveAttack(att, cards, t, lost) {
+    const kind = attackKind(cards, t);
+    if (!kind) return false;
+    removeFromHand(att, cards);
+    G.discard.push(...cards);
+    const def = t.owner;
+    const used = cards.length > 4 ? `${cards.length} cards` : cards.map(cardLabel).join(" + ");
+    log(`${who(att)} attacked ${targetName(t)} with ${STRIKE_NAMES[kind]} (${used}).`, att);
+
+    if (t.kind === "island") {
+      def.island = def.island.filter(c => c.id !== t.card.id);
+      G.discard.push(t.card);
+      log(`${cardLabel(t.card)} was destroyed.`, def);
+      notice(def.human ? `Your ${cardLabel(t.card)} was destroyed` : `${def.name} lost ${cardLabel(t.card)}`, def);
+    } else {
+      const hits = shipHits(cards, t.ship);
+      if (hits >= t.ship.cards.length) {
+        def.ships = def.ships.filter(s => s.id !== t.ship.id);
+        G.discard.push(...t.ship.cards);
+        log(`The ${shipName(t.ship)} sank.`, def);
+        notice(`${def.human ? "Your" : poss(def)} ${shipName(t.ship)} sank`, def);
+      } else {
+        if (!lost || lost.length !== hits) lost = aiPickLosses(t.ship, hits);
+        const gone = new Set(lost.map(c => c.id));
+        t.ship.cards = t.ship.cards.filter(c => !gone.has(c.id));
+        G.discard.push(...lost);
+        const left = t.ship.cards.length;
+        log(`The ${shipName(t.ship)} lost ${lost.map(cardLabel).join(", ")}. ${left} card${left === 1 ? "" : "s"} left.`, def);
+      }
+    }
+
+    if (assets(def) === 0) {
+      def.out = true;
+      G.discard.push(...def.hand);
+      def.hand = [];
+      log(def.human ? "You have no island cards or ships left. You are out." : `${def.name} has no island cards or ships left and is out.`, def);
+      notice(def.human ? "You are out" : `${def.name} is out!`, def);
+    }
+    render();
+    return true;
+  }
+
+  // ---------- Animation ----------
+  // Every action plays out on the board first (cards fly, cannons fire, ships sink), then the game state
+  // changes and the board is redrawn. Visuals are skipped when FX.off is set (fast simulations), when the
+  // player turns Motion off, or when the page is hidden; sounds still play.
+
+  const FX = (() => {
+    const api = { off: false, motion: true };
+    try { api.motion = localStorage.getItem("cots-motion") !== "0"; } catch (e) {}
+    const on = () => !api.off && api.motion && !document.hidden;
+    const inBoard = sel => $("#board").querySelector(sel);
+    const R = el => el && el.getClientRects().length ? el.getBoundingClientRect() : null;
+    const mid = r => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    const done = (anim, ms) => Promise.race([anim.finished.catch(() => {}), new Promise(r => setTimeout(r, ms + 300))]);
+    const BACK = `<i class="back"></i>`;
+
+    const handEl = p => p.human ? inBoard("#hand") : inBoard(`[data-fan="${p.id}"] .fan`) || inBoard(`[data-fan="${p.id}"]`);
+    const cardEl = c => inBoard(`[data-cid="${c.id}"]`);
+    const shipEl = s => inBoard(`[data-ship="${s.id}"]`);
+    const discard = () => R(inBoard("#discard"));
+    // Where a played card starts: your own card in your hand (hidden while its copy flies), or a rival's fan
+    function fromHand(p, c) {
+      const el = p.human && cardEl(c);
+      if (el) { el.style.visibility = "hidden"; return R(el); }
+      return R(handEl(p));
+    }
+    // A fleet with no ships yet has no size, so new ships head for the captain's waters instead
+    function fleetRect(p) {
+      const fleet = inBoard(`[data-fleet="${p.id}"]`);
+      return R(fleet && fleet.children.length ? fleet : inBoard(`[data-hold="${p.id}"]`));
+    }
+
+    // Cards whisk as they fly; a volley of many cards makes one or two whisks, not a dozen
+    let lastFlick = 0;
+    function flick(delay) {
+      const now = performance.now() + delay;
+      if (now - lastFlick < 120) return;
+      lastFlick = now;
+      Sound.play("flick", delay / 1000);
+    }
+
+    function fly(html, from, to, { dur = 480, delay = 0, arc = 50, spin = 0, scale = 1 } = {}) {
+      if (!on() || !from || !to) return Promise.resolve();
+      if (!html.includes("ball")) flick(delay);
+      const el = document.createElement("div");
+      el.className = "flyer";
+      el.innerHTML = html;
+      $("#fx").appendChild(el);
+      const a = mid(from), b = mid(to);
+      const at = (x, y, r, s) => `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${r}deg) scale(${s})`;
+      const anim = el.animate([
+        { transform: at(a.x, a.y, 0, 1) },
+        { transform: at((a.x + b.x) / 2, (a.y + b.y) / 2 - arc, spin / 2, 1.08), offset: 0.5 },
+        { transform: at(b.x, b.y, spin, scale) }
+      ], { duration: dur, delay, easing: "ease-in-out", fill: "both" });
+      return done(anim, dur + delay).then(() => el.remove());
+    }
+
+    function burst(rect, kind) {
+      if (!on() || !rect) return Promise.resolve();
+      const p = mid(rect);
+      const el = document.createElement("div");
+      el.className = `burst ${kind}`;
+      el.style.left = `${p.x}px`;
+      el.style.top = `${p.y}px`;
+      // Droplets or sparks thrown up in a fan
+      const bits = (cls, n, spread) => Array.from({ length: n }, (_, i) => {
+        const ang = Math.PI + (i / (n - 1)) * Math.PI;
+        return `<i class="${cls}" style="--dx:${(Math.cos(ang) * spread).toFixed(0)}px; --dy:${(Math.sin(ang) * spread).toFixed(0)}px"></i>`;
+      }).join("");
+      el.innerHTML = {
+        boom: `<i class="smoke"></i><i class="flash"></i>${bits("spark", 7, 36)}`,
+        splash: `<i class="ring"></i><i class="ring"></i>${bits("drop", 8, 32)}`,
+        gold: `<i class="ring"></i>${bits("spark", 6, 24)}`,
+        radar: `<i class="ring"></i><i class="ring"></i>`,
+        muzzle: `<i class="smoke"></i><i class="flash" style="width:46px;height:46px"></i>`
+      }[kind];
+      $("#fx").appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+      return sleep(kind === "radar" ? 750 : 320);
+    }
+
+    function shake(el) {
+      if (!on() || !el) return Promise.resolve();
+      return done(el.animate([
+        { transform: "translateX(0)" }, { transform: "translateX(-6px) rotate(-2deg)" },
+        { transform: "translateX(5px) rotate(2deg)" }, { transform: "translateX(-3px)" }, { transform: "translateX(0)" }
+      ], { duration: 380 }), 380);
+    }
+
+    function sink(el) {
+      if (!on() || !el) return Promise.resolve();
+      return done(el.animate([
+        { transform: "none", opacity: 1 },
+        { transform: "translateY(6px) rotate(-8deg)", opacity: 1, offset: 0.3 },
+        { transform: "translateY(46px) rotate(-24deg)", opacity: 0 }
+      ], { duration: 1100, easing: "ease-in", fill: "forwards" }), 1100);
+    }
+
+    const toDiscard = (p, cards) => Promise.all(cards.map((c, i) =>
+      fly(cardHTML(c), fromHand(p, c), discard(), { dur: 460, delay: i * 90, arc: 40, spin: 8 })));
+
+    api.draw = (p, n) => {
+      const from = R(inBoard("#deck .stack")), to = R(handEl(p));
+      return Promise.all(Array.from({ length: n }, (_, i) => fly(BACK, from, to, { dur: 430, delay: i * 140, arc: 30 })));
+    };
+
+    api.fortify = async (p, c) => {
+      const to = R(inBoard(`[data-isle="${p.id}"]`));
+      await fly(cardHTML(c), fromHand(p, c), to, { dur: 520, arc: 70 });
+      burst(to, "gold");
+    };
+
+    api.launch = async (p, cards) => {
+      const to = fleetRect(p);
+      await Promise.all(cards.map((c, i) => fly(cardHTML(c), fromHand(p, c), to, { dur: 500, delay: i * 90, arc: 60 })));
+      await burst(to, "splash");
+    };
+
+    api.reinforce = async (p, ship, cards) => {
+      const to = R(shipEl(ship));
+      await Promise.all(cards.map((c, i) => fly(cardHTML(c), fromHand(p, c), to, { dur: 500, delay: i * 90, arc: 60 })));
+      burst(to, "gold");
+    };
+
+    api.cycle = async (p, cards) => {
+      await toDiscard(p, cards);
+      await api.draw(p, cards.length);
+    };
+
+    api.radar = () => burst(R(inBoard("#deck .stack")), "radar");
+
+    // The spent cards go to the discard pile while the attacker's guns fire on the target.
+    // Then the target reacts: an island card blows apart, a ship shakes off cards or goes down.
+    api.attack = async (att, cards, t, lost) => {
+      const sinks = t.kind === "ship" && (cards[0].joker || shipHits(cards, t.ship) >= t.ship.cards.length);
+      const impact = t.kind === "island" ? "crash" : sinks ? "sink" : "hull";
+      Sound.play("cannon");
+      // Without the animation, the hit still lands a moment after the shot
+      if (!on()) { Sound.play(impact, 0.35); return; }
+      const gun = R(inBoard(`[data-fleet="${att.id}"] .ship`)) || R(inBoard(`[data-isle="${att.id}"]`)) || R(handEl(att));
+      const target = t.kind === "island" ? cardEl(t.card) : shipEl(t.ship);
+      const tr = R(target);
+      const spent = toDiscard(att, cards);
+      burst(gun, "muzzle");
+      const shots = Math.min(cards.length, 4);
+      await Promise.all(Array.from({ length: shots }, (_, i) =>
+        fly(`<i class="ball"></i>`, gun, tr, { dur: 560, delay: i * 130, arc: 110 })));
+      Sound.play(impact);
+      if (t.kind === "island") {
+        burst(tr, "boom");
+        await shake(target);
+        if (target) target.style.visibility = "hidden";
+        await fly(cardHTML(t.card), tr, discard(), { dur: 460, arc: 40, spin: 25 });
+      } else if (sinks) {
+        burst(tr, "splash");
+        await sink(target);
+      } else {
+        burst(tr, "splash");
+        await shake(target);
+        await Promise.all(lost.map((c, i) => fly(cardHTML(c), tr, discard(), { dur: 460, delay: i * 100, arc: 40, spin: 15 })));
+      }
+      await spent;
+    };
+
+    return api;
+  })();
+
+  // Each action animates, then changes the game and redraws. If a new game starts mid-animation,
+  // the old action is dropped (each returns false).
+  async function doDraw(p) {
+    const game = G;
+    await FX.draw(p, 1);
+    if (G !== game) return false;
+    drawPhase(p);
+    render();
+    return true;
+  }
+
+  async function doFortify(p, card) {
+    const game = G;
+    await FX.fortify(p, card);
+    if (G !== game) return false;
+    fortify(p, card);
+    markFresh("c" + card.id);
+    render();
+    return true;
+  }
+
+  async function doLaunch(p, cards, ability) {
+    const game = G;
+    await FX.launch(p, cards);
+    if (G !== game) return false;
+    markFresh("s" + launch(p, cards, ability).id);
+    render();
+    return true;
+  }
+
+  async function doReinforce(p, ship, cards) {
+    const game = G;
+    await FX.reinforce(p, ship, cards);
+    if (G !== game) return false;
+    reinforce(p, ship, cards);
+    render();
+    return true;
+  }
+
+  async function doCycle(p, cards) {
+    const game = G;
+    await FX.cycle(p, cards);
+    if (G !== game) return false;
+    cycle(p, cards);
+    render();
+    return true;
+  }
+
+  async function doAttack(att, cards, t, lost) {
+    const game = G;
+    // A partial hit on a ship needs its knocked-off cards chosen before the animation shows them leaving
+    if (t.kind === "ship" && !cards[0].joker) {
+      const hits = shipHits(cards, t.ship);
+      if (hits < t.ship.cards.length && (!lost || lost.length !== hits)) lost = aiPickLosses(t.ship, hits);
+    }
+    await FX.attack(att, cards, t, lost || []);
+    if (G !== game) return false;
+    resolveAttack(att, cards, t, lost);
+    return true;
+  }
+
+  // ---------- Turn flow ----------
+
+  async function startTurn() {
+    const game = G;
+    if (G.over) return;
+    const p = G.players[G.turn];
+    G.turnStarts.push(G.logCount);
+    if (p.human) {
+      G.mode = "draw";
+      G.selected.clear();
+      render();
+      return;
+    }
+    G.mode = "wait";
+    render();
+    Sound.play("rival");
+    await sleep(600);
+    if (G !== game) return;
+    await aiTurn(p);
+    if (G !== game) return;
+    // A beat to read what happened before the next captain moves
+    await sleep(1100);
+    if (G !== game) return;
+    endTurn();
+  }
+
+  function endTurn() {
+    if (checkWin()) return;
+    do { G.turn = (G.turn + 1) % G.players.length; } while (G.players[G.turn].out);
+    G.mode = "wait";
+    render();
+    const game = G;
+    setTimeout(() => { if (G === game) startTurn(); }, 450);
+  }
+
+  function checkWin() {
+    if (G.over) return true;
+    const me = G.players[0];
+    const left = alive();
+    if (me.out) {
+      G.over = true;
+      render();
+      endModal(false, left.length === 1 ? left[0] : null);
+      return true;
+    }
+    if (left.length === 1) {
+      G.over = true;
+      render();
+      endModal(true);
+      return true;
+    }
+    return false;
+  }
+
+  // ---------- Rival captains ----------
+
+  function aiAttack(p) {
+    const pool = p.hand.filter(c => !c.joker).sort((a, b) => a.rank - b.rank);
+    const joker = p.hand.find(c => c.joker);
+    let best = null;
+    const consider = (cards, t, cost) => {
+      cost += assets(t.owner) * 0.5;
+      if (!best || cost < best.cost) best = { cards, target: t, cost };
+    };
+    for (const o of alive()) {
+      if (o === p) continue;
+      const targets = [
+        ...o.island.map(card => ({ kind: "island", owner: o, card })),
+        ...o.ships.map(ship => ({ kind: "ship", owner: o, ship }))
+      ];
+      for (const t of targets) {
+        if (t.kind === "ship") {
+          // Sink it outright if possible, otherwise chip away at it (a partial hit costs more)
+          const n = t.ship.cards.length;
+          const same = pool.filter(c => c.suit === t.ship.suit);
+          const ammo = pool.filter(c => c.suit !== t.ship.suit);
+          if (same.length >= n) consider(same.slice(0, n), t, n);
+          else if (same.length) consider(same, t, same.length + 3);
+          const pairs = Math.min(n, Math.floor(ammo.length / 2));
+          if (pairs === n) consider(ammo.slice(0, 2 * n), t, 1.5 * n + 0.5);
+          else if (pairs && p.hand.length >= 8) consider(ammo.slice(0, 2 * pairs), t, 2 * pairs + 3);
+          if (joker && (assets(o) === 1 || n >= 4)) consider([joker], t, 5);
+          continue;
+        }
+        const need = strength(t.card);
+        const suit = islandSuit(t);
+        for (const c of pool) if (attackKind([c], t)) consider([c], t, 1 + c.rank / 20);
+        // Several cards of the target's suit, highest first, until their values add up
+        const picked = [];
+        let dmg = 0;
+        for (const c of pool.filter(c => c.suit === suit).sort((a, b) => b.rank - a.rank)) {
+          if (dmg >= need) break;
+          picked.push(c);
+          dmg += c.rank;
+        }
+        if (dmg >= need && picked.length > 1) consider(picked, t, picked.length + 0.5);
+        // Or a volley of the lowest off-suit cards, one per point of strength
+        const ammo = pool.filter(c => c.suit !== suit);
+        if (ammo.length >= need) consider(ammo.slice(0, need), t, need + 0.5);
+        // Save the Joker for big targets or a finishing blow
+        if (joker && (assets(o) === 1 || need >= 10)) consider([joker], t, 5);
+      }
+    }
+    return best;
+  }
+
+  async function aiTurn(p) {
+    const game = G;
+    if (!await doDraw(p)) return;
+    await sleep(350);
+    if (G !== game) return;
+
+    // A high card is harder to strike, so fortify with the best one
+    const fort = p.hand.filter(c => !c.joker && canFortify(p, c)).sort((a, b) => b.rank - a.rank);
+    if (fort.length && assets(p) <= 1) { await doFortify(p, fort[0]); return; }
+    const joker = p.hand.find(c => c.joker);
+    if (joker && assets(p) === 1 && canFortify(p, joker)) { await doFortify(p, joker); return; }
+
+    const crowded = p.hand.length >= 9;
+    const move = aiAttack(p);
+    if (move) { await doAttack(p, move.cards, move.target); return; }
+
+    if (fort.length && (p.island.length < 5 || Math.random() < 0.35)) { await doFortify(p, fort[0]); return; }
+
+    // Build the ship from the biggest single-suit group of off-suit cards
+    const groups = SUIT_ORDER.split("").filter(s => s !== p.suit)
+      .map(s => p.hand.filter(c => !c.joker && c.suit === s).sort((a, b) => a.rank - b.rank))
+      .sort((a, b) => b.length - a.length);
+    const set = groups[0];
+    if (canLaunch(p, set) && (p.ships.length < 2 || crowded)) {
+      const ability = pick(["destroyer", "destroyer", "supply", "radar"]);
+      if (!await doLaunch(p, set.slice(0, crowded ? Math.min(set.length, 5) : 3), ability)) return;
+      if (ability === "destroyer") {
+        await sleep(600);
+        if (G !== game) return;
+        const free = aiAttack(p);
+        if (free) await doAttack(p, free.cards, free.target);
+        else log(`${p.name}'s Destroyer found no target.`, p);
+      } else {
+        await shipBonus(p, ability);
+      }
+      return;
+    }
+
+    // Add matching cards to the weakest ship that has them, while the island stands and the ship has room
+    const refit = hasIsland(p) && p.ships
+      .map(s => ({ s, cards: p.hand.filter(c => !c.joker && c.suit === s.suit).sort((a, b) => a.rank - b.rank).slice(0, SHIP_MAX - s.cards.length) }))
+      .filter(o => o.cards.length)
+      .sort((a, b) => a.s.cards.length - b.s.cards.length)[0];
+    if (refit && (refit.s.cards.length <= 3 || crowded || Math.random() < 0.5)) {
+      await doReinforce(p, refit.s, refit.cards.slice(0, crowded ? 3 : 2));
+      return;
+    }
+
+    // Swap out low off-suit cards that don't match a ship rather than passing
+    const junk = p.hand
+      .filter(c => !c.joker && c.suit !== p.suit && c.rank <= 7 && !p.ships.some(s => s.suit === c.suit))
+      .sort((a, b) => a.rank - b.rank);
+    if (junk.length >= 3) { await doCycle(p, junk.slice(0, 3)); return; }
+
+    log(`${p.name} passed.`, p);
+  }
+
+  function aiRadar(p, n) {
+    const top = G.deck.splice(-n, n);
+    const value = c => c.joker ? 100 : c.suit === p.suit ? 50 + c.rank : c.rank;
+    top.sort((a, b) => value(a) - value(b)); // best card ends up on top (end of array)
+    G.deck.push(...top);
+    log(`${p.name}'s Radar Ship scanned the top ${n} cards.`, p);
+  }
+
+  // ---------- Your turn ----------
+
+  const selectedCards = () => G.players[0].hand.filter(c => G.selected.has(c.id));
+  const targeting = () => G.mode === "target" || G.mode === "destroyer-target";
+
+  function allTargets(cards) {
+    const list = [];
+    for (const o of G.players) {
+      if (o.human || o.out) continue;
+      for (const card of o.island) {
+        const t = { kind: "island", owner: o, card };
+        if (attackKind(cards, t)) list.push(t);
+      }
+      for (const ship of o.ships) {
+        const t = { kind: "ship", owner: o, ship };
+        if (attackKind(cards, t)) list.push(t);
+      }
+    }
+    return list;
+  }
+
+  function parseTarget(str) {
+    const [k, pid, id] = str.split(":");
+    const owner = G.players[+pid];
+    if (k === "i") {
+      const card = owner.island.find(c => c.id === +id);
+      return card && { kind: "island", owner, card };
+    }
+    const ship = owner.ships.find(s => s.id === +id);
+    return ship && { kind: "ship", owner, ship };
+  }
+
+  function finishHuman() {
+    G.selected.clear();
+    G.mode = "wait";
+    render();
+    if (!checkWin()) endTurn();
+  }
+
+  // Lock out clicks while an action animates
+  function busy() {
+    G.mode = "busy";
+    G.selected.clear();
+    render();
+  }
+
+  async function humanAction(act) {
+    const me = G.players[0];
+    const sel = selectedCards();
+    switch (act) {
+      case "draw":
+        busy();
+        if (!await doDraw(me)) return;
+        G.mode = "act";
+        render();
+        break;
+      case "cycle":
+        busy();
+        if (await doCycle(me, sel)) finishHuman();
+        break;
+      case "fortify":
+        busy();
+        if (await doFortify(me, sel[0])) finishHuman();
+        break;
+      case "launch": {
+        const ability = await chooseShip(sel.length);
+        if (!ability) return;
+        busy();
+        if (!await doLaunch(me, sel, ability)) return;
+        if (ability === "destroyer") { G.mode = "destroyer"; render(); }
+        else { await shipBonus(me, ability); finishHuman(); }
+        break;
+      }
+      case "reinforce": {
+        const ships = reinforceShips(me, sel);
+        if (ships.length === 1) {
+          busy();
+          if (await doReinforce(me, ships[0], sel)) finishHuman();
+        } else { G.mode = "reinforce"; render(); }
+        break;
+      }
+      case "attack":
+        G.mode = G.mode === "destroyer" ? "destroyer-target" : "target";
+        render();
+        break;
+      case "cancel":
+        G.mode = G.mode === "destroyer-target" ? "destroyer" : "act";
+        render();
+        break;
+      case "pass":
+        log("You passed.", me);
+        finishHuman();
+        break;
+      case "skip":
+        log("Your Destroyer held its fire.", me);
+        finishHuman();
+        break;
+    }
+  }
+
+  async function humanAttack(t) {
+    const cards = selectedCards();
+    if (!attackKind(cards, t)) return;
+    let lost;
+    if (t.kind === "ship") {
+      const hits = shipHits(cards, t.ship);
+      if (hits < t.ship.cards.length) {
+        lost = await pickLosses(t.ship, hits);
+        if (!lost) return;
+      }
+    }
+    busy();
+    if (await doAttack(G.players[0], cards, t, lost)) finishHuman();
+  }
+
+  // ---------- Dialogs ----------
+
+  function modal(html, buttons) {
+    return new Promise(resolve => {
+      if (html !== null) $("#modal-body").innerHTML = html;
+      const bar = $("#modal-actions");
+      bar.innerHTML = "";
+      buttons.forEach(b => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "btn " + (b.cls || "");
+        el.textContent = b.label;
+        el.onclick = () => {
+          $("#modal").hidden = true;
+          resolve(typeof b.value === "function" ? b.value() : b.value);
+        };
+        bar.appendChild(el);
+      });
+      $("#modal").hidden = false;
+      bar.querySelector("button").focus();
+    });
+  }
+
+  // After a partial hit on a ship, the attacker picks exactly `hits` of its cards to knock off
+  function pickLosses(ship, hits) {
+    const chosen = new Set();
+    const s = hits === 1 ? "" : "s";
+    const done = modal(`
+      <h2 id="modal-title">Knock off ${hits} card${s}</h2>
+      <p>Your attack knocks ${hits} card${s} off the ${shipName(ship)}. Choose which go to the discard pile.</p>
+      <div class="row loss-pick">${ship.cards.map(c => cardHTML(c, "button", "", `data-loss="${c.id}" aria-pressed="false"`)).join("")}</div>`,
+      [{ label: `Knock off ${hits} card${s}`, cls: "primary", value: () => ship.cards.filter(c => chosen.has(c.id)) },
+       { label: "Cancel", value: null }]);
+    const ok = $("#modal-actions button");
+    ok.disabled = true;
+    $("#modal-body").onclick = e => {
+      const b = e.target.closest("[data-loss]");
+      if (!b) return;
+      const id = +b.dataset.loss;
+      if (chosen.has(id)) chosen.delete(id);
+      else if (chosen.size < hits) chosen.add(id);
+      else return;
+      b.classList.toggle("sel", chosen.has(id));
+      b.setAttribute("aria-pressed", String(chosen.has(id)));
+      Sound.play("tick");
+      ok.disabled = chosen.size !== hits;
+    };
+    return done.then(v => { $("#modal-body").onclick = null; return v; });
+  }
+
+  function chooseShip(size) {
+    return new Promise(resolve => {
+      $("#modal-body").innerHTML = `
+        <h2 id="modal-title">Launch a ship</h2>
+        <p>Your new ship has ${size} cards, so it can take ${size} hits. Choose its class and instant bonus.</p>
+        <div class="ability-list">
+          ${Object.entries(SHIPS).map(([k, a]) =>
+            `<button type="button" class="btn" data-ability="${k}">${a.name}<span>${a.desc}</span></button>`).join("")}
+        </div>`;
+      $("#modal-body").onclick = e => {
+        const b = e.target.closest("[data-ability]");
+        if (!b) return;
+        $("#modal-body").onclick = null;
+        $("#modal").hidden = true;
+        resolve(b.dataset.ability);
+      };
+      modal(null, [{ label: "Cancel", value: null }]).then(v => {
+        $("#modal-body").onclick = null;
+        resolve(v);
+      });
+    });
+  }
+
+  function radarModal(n) {
+    const top = G.deck.slice(-n).reverse(); // index 0 is the next card drawn
+    const paint = () => {
+      $("#modal-body").innerHTML = `
+        <h2 id="modal-title">Radar sweep</h2>
+        <p>The top ${n} cards of the draw pile, next draw first. Put them in the order you want.</p>
+        <ol class="radar">
+          ${top.map((c, i) => `<li>${cardHTML(c, "div", "mini")}
+            <span>${i === 0 ? "Next draw" : "Draw " + (i + 1)}</span>
+            <button type="button" class="btn small" data-up="${i}" ${i === 0 ? "disabled" : ""} aria-label="Move ${cardLabel(c)} up">↑</button>
+            <button type="button" class="btn small" data-down="${i}" ${i === top.length - 1 ? "disabled" : ""} aria-label="Move ${cardLabel(c)} down">↓</button>
+          </li>`).join("")}
+        </ol>`;
+    };
+    paint();
+    $("#modal-body").onclick = e => {
+      const b = e.target.closest("[data-up],[data-down]");
+      if (!b) return;
+      const i = +(b.dataset.up ?? b.dataset.down);
+      const j = b.dataset.up !== undefined ? i - 1 : i + 1;
+      [top[i], top[j]] = [top[j], top[i]];
+      paint();
+    };
+    return modal(null, [{ label: "Done", value: true, cls: "primary" }]).then(() => {
+      $("#modal-body").onclick = null;
+      G.deck.splice(-n, n, ...top.slice().reverse());
+      log(`Your Radar Ship scanned the top ${n} cards.`, G.players[0]);
+    });
+  }
+
+  function setupModal() {
+    const current = G ? G.players[0].suit : "S";
+    const rivals = G ? G.players.length - 1 : 2;
+    return modal(
+      `<h2 id="modal-title">New game</h2>
+       <fieldset>
+         <legend>Your suit</legend>
+         <div class="choices">
+           ${SUIT_ORDER.split("").map(s => `
+             <label class="choice" style="--sc: var(--s-${s})">
+               <input type="radio" name="suit" id="suit-${s}" value="${s}" ${s === current ? "checked" : ""}>
+               <span class="badge">${SUITS[s].sym}</span>${SUITS[s].name}
+             </label>`).join("")}
+         </div>
+       </fieldset>
+       <fieldset>
+         <legend>Rival captains</legend>
+         <div class="choices">
+           ${[1, 2, 3].map(n => `
+             <label class="choice">
+               <input type="radio" name="rivals" id="rivals-${n}" value="${n}" ${n === rivals ? "checked" : ""}>${n}
+             </label>`).join("")}
+         </div>
+       </fieldset>`,
+      [
+        { label: "Set sail", cls: "primary", value: () => ({
+            suit: document.querySelector('input[name="suit"]:checked').value,
+            rivals: +document.querySelector('input[name="rivals"]:checked').value
+          }) },
+        { label: "Cancel", value: null }
+      ]
+    ).then(v => { if (v) newGame(v.suit, v.rivals); });
+  }
+
+  // The centre log shows one full round: every turn since the current captain's previous turn, which is faded
+  function tickerHTML() {
+    const k = alive().length + 1;
+    const starts = G.turnStarts;
+    const from = starts.length >= k ? starts[starts.length - k] : 0;
+    const fadeTo = starts.length >= k ? starts[starts.length - k + 1] : 0;
+    const me = G.players[0];
+    // Damage lines are logged under the defender's suit; your own actions aren't news to you
+    const hitsYou = e => e.tp !== 0 && (e.suit === me.suit || /\byour\b/.test(e.msg));
+    const entries = G.log.filter(e => e.n > from).reverse();
+    return entries.map((e, i) => {
+      const cls = [e.n <= fadeTo ? "old" : "", hitsYou(e) ? "hit" : "", i && e.t !== entries[i - 1].t ? "turn-start" : ""].join(" ").trim();
+      return `<li class="${cls}"${e.suit ? ` style="--sc: var(--s-${e.suit})"` : ""}>${tint(e.msg)}</li>`;
+    }).join("");
+  }
+
+  // A short banner when something is destroyed. It fades by itself
+  function notice(msg, owner) {
+    const box = $("#notices");
+    const bar = $(".topbar").getBoundingClientRect();
+    box.style.top = `${Math.max(8, bar.bottom + 10)}px`;
+    const el = document.createElement("div");
+    el.className = `notice${owner.human ? " mine" : ""}`;
+    el.style.setProperty("--sc", `var(--s-${owner.suit})`);
+    el.innerHTML = tint(msg);
+    box.appendChild(el);
+    while (box.children.length > 4) box.firstElementChild.remove();
+    setTimeout(() => {
+      el.classList.add("gone");
+      setTimeout(() => el.remove(), 650);
+    }, 3200);
+  }
+
+  function endModal(won, winner) {
+    Sound.play(won ? "win" : "lose");
+    const html = won
+      ? `<h2 id="modal-title">Victory</h2><p>Every rival island and fleet is destroyed. The sea is yours.</p>`
+      : `<h2 id="modal-title">Sunk</h2><p>Your Main Island and fleet are gone.${winner ? ` ${winner.name} rules the sea.` : ""}</p>`;
+    modal(html, [{ label: "Play again", cls: "primary", value: true }, { label: "Look at the board", value: false }])
+      .then(again => { if (again) setupModal(); });
+  }
+
+  // ---------- Rendering ----------
+
+  // Wrap card names like "K♦" (and bare suit symbols in ship names) in their suit's color
+  const SYM_SUIT = { "♥": "H", "♦": "D", "♣": "C", "♠": "S" };
+  const tint = msg => msg.replace(/(?:10|[2-9AJQK])?[♥♦♣♠]/g, m => `<span class="cl cl-${SYM_SUIT[m.slice(-1)]}">${m}</span>`);
+
+  // Pirate court cards, drawn in the suit's ink (currentColor): Jack the deckhand, Queen the navigator, King the captain
+  const SKIN = "#e6bf96", DARK = "#2a2018", GOLD = "#c99a3a", LINEN = "#f4ead2";
+  const COAT = `<path d="M5 40 Q7 27 20 26 Q33 27 35 40Z" fill="currentColor"/>`;
+  const EYES = `<circle cx="17.5" cy="17" r=".9" fill="${DARK}"/><circle cx="22.5" cy="17" r=".9" fill="${DARK}"/>`;
+  const FACES = {
+    11: `${COAT}<path d="M8.5 33 H31.5 M7 37 H33" stroke="${LINEN}" stroke-width="1.6"/>
+      <circle cx="20" cy="18" r="7" fill="${SKIN}"/>
+      <circle cx="17.5" cy="17" r=".9" fill="${DARK}"/><path d="M14 14.5 L27 19.5" stroke="${DARK}" stroke-width=".9"/><circle cx="22.6" cy="17.4" r="1.9" fill="${DARK}"/>
+      <path d="M17.3 21 Q20 23.2 22.7 21" stroke="${DARK}" stroke-width=".9" fill="none"/>
+      <path d="M12.6 16.2 Q13 9.4 20 9.4 Q27 9.4 27.4 16.2 Q20 12.6 12.6 16.2Z" fill="currentColor"/>
+      <path d="M26.6 12.6 L32 10.8 L31 15Z" fill="currentColor"/>`,
+    12: `<path d="M12.2 18 Q11 31 15 31 H25 Q29 31 27.8 18Z" fill="#6b4220"/>${COAT}
+      <path d="M17 26 L20 31 L23 26Z" fill="${LINEN}"/>
+      <circle cx="20" cy="18" r="7" fill="${SKIN}"/>${EYES}
+      <path d="M18 21.3 Q20 22.5 22 21.3" stroke="#8a3a2a" stroke-width=".9" fill="none"/>
+      <path d="M6.5 13.2 Q20 9.2 33.5 13.2 Q30 10.2 26 10.2 Q25 4 20 4 Q15 4 14 10.2 Q10 10.2 6.5 13.2Z" fill="${DARK}"/>
+      <path d="M25.5 8.5 Q32 1.5 36.5 4.5 Q31 6 27 10.5Z" fill="currentColor"/>
+      <rect x="27" y="29" width="11" height="3" rx="1" transform="rotate(-35 27 29)" fill="${GOLD}"/>`,
+    13: `${COAT}<path d="M17 26 L20 33 L23 26Z" fill="${LINEN}"/>
+      <path d="M9 30.5 h5 M26 30.5 h5" stroke="${GOLD}" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="20" cy="18" r="7" fill="${SKIN}"/>${EYES}
+      <path d="M13.4 19.6 Q20 31 26.6 19.6 Q23 23.4 20 23.4 Q17 23.4 13.4 19.6Z" fill="#3a2a1c"/>
+      <path d="M4 13.5 Q20 -1 36 13.5 Q28 9.3 20 10.3 Q12 9.3 4 13.5Z" fill="${DARK}"/>
+      <path d="M4 13.5 Q12 9.3 20 10.3 Q28 9.3 36 13.5" fill="none" stroke="${GOLD}" stroke-width="1"/>
+      <circle cx="20" cy="7" r="1.9" fill="${LINEN}"/><path d="M18.2 9.6 L21.8 11 M21.8 9.6 L18.2 11" stroke="${LINEN}" stroke-width=".8"/>`
+  };
+  const JOLLY_ROGER = `<path d="M9 30 L31 38 M31 30 L9 38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    <path d="M20 5 C11 5 9 12 10 18.5 C11 22.5 14 23 14 27 H26 C26 23 29 22.5 30 18.5 C31 12 29 5 20 5Z" fill="currentColor"/>
+    <circle cx="16" cy="16.5" r="3" fill="${LINEN}"/><circle cx="24" cy="16.5" r="3" fill="${LINEN}"/><path d="M19 22 L20 19.8 L21 22Z" fill="${LINEN}"/>`;
+  const art = svg => `<svg class="face" viewBox="0 0 40 40" aria-hidden="true">${svg}</svg>`;
+
+  function cardHTML(c, tag = "div", cls = "", attrs = "") {
+    const type = tag === "button" ? 'type="button"' : "";
+    if (c.joker) {
+      return `<${tag} ${type} class="card joker ${cls}" data-cid="${c.id}" ${attrs} aria-label="Joker"><span class="r">JOKER</span>${art(JOLLY_ROGER)}</${tag}>`;
+    }
+    const s = SUITS[c.suit];
+    const center = FACES[c.rank] ? art(FACES[c.rank]) : `<span class="s">${s.sym}</span>`;
+    return `<${tag} ${type} class="card suit-${c.suit} ${c.rank === 1 ? "ace" : ""} ${cls}" data-cid="${c.id}" ${attrs} aria-label="${rankLabel(c.rank)} of ${s.name}">` +
+      `<span class="r">${rankLabel(c.rank)}<small>${s.sym}</small></span>${center}</${tag}>`;
+  }
+
+  // A rival's hand, face down and fanned
+  function fanHTML(n) {
+    if (!n) return `<span class="empty">Empty hand</span>`;
+    const step = Math.min(5, 34 / n);
+    return `<div class="fan" aria-hidden="true">${Array.from({ length: n }, (_, i) =>
+      `<i class="back" style="--r:${((i - (n - 1) / 2) * step).toFixed(1)}deg"></i>`).join("")}</div>`;
+  }
+
+  const PALM = `<svg class="palm" viewBox="0 0 38 52" aria-hidden="true">
+    <path d="M20 51 Q15 34 21 16" stroke="var(--wood)" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <g fill="var(--leaf)">
+      <path d="M21 16 Q10 5 1 13 Q11 10 21 16Z"/><path d="M21 16 Q32 4 37 14 Q29 9 21 16Z"/>
+      <path d="M21 16 Q14 1 23 0 Q19 8 21 16Z"/><path d="M21 16 Q8 17 4 28 Q12 19 21 16Z"/>
+      <path d="M21 16 Q33 17 35 28 Q28 19 21 16Z"/>
+    </g>
+    <circle cx="19" cy="18.5" r="2" fill="var(--hull)"/><circle cx="23" cy="19" r="2" fill="var(--hull)"/>
+  </svg>`;
+
+  // A ship gains masts as cards are added. Each ship type has its own deck detail.
+  function shipArt(ship) {
+    const color = `var(--s-${ship.suit})`;
+    const masts = Math.max(1, Math.min(3, ship.cards.length - 1));
+    const xs = [[60], [46, 74], [34, 60, 86]][masts - 1];
+    const mid = xs[Math.floor(masts / 2)];
+    const rig = xs.map(x => {
+      const top = x === mid ? 4 : 10;
+      return `<line x1="${x}" y1="${top}" x2="${x}" y2="47" stroke="var(--wood)" stroke-width="2"/>` +
+        `<path d="M${x - 12} ${top + 6} Q${x} ${top + 2} ${x + 12} ${top + 6} L${x + 11} ${top + 18} Q${x} ${top + 15} ${x - 11} ${top + 18}Z" fill="var(--sail)" stroke="${color}" stroke-width="1.2"/>` +
+        `<path d="M${x - 14} ${top + 21} Q${x} ${top + 17} ${x + 14} ${top + 21} L${x + 12} ${top + 34} Q${x} ${top + 31} ${x - 12} ${top + 34}Z" fill="${color}"/>`;
+    }).join("");
+    const detail = {
+      destroyer: [28, 44, 60, 76, 92].map(x => `<circle cx="${x}" cy="53" r="2.2" fill="#15110c"/>`).join(""),
+      supply: `<rect x="11" y="39" width="8" height="7" fill="var(--sand-2)" stroke="var(--wood)"/><rect x="101" y="39" width="8" height="7" fill="var(--sand-2)" stroke="var(--wood)"/><rect x="104" y="33" width="6" height="6" fill="var(--sand)" stroke="var(--wood)"/>`,
+      radar: `<circle cx="${mid}" cy="3" r="2.5" fill="${color}"/><path d="M${mid + 5} -1 a5 5 0 0 1 0 8 M${mid + 8} -3 a8 8 0 0 1 0 12 M${mid - 5} -1 a5 5 0 0 0 0 8 M${mid - 8} -3 a8 8 0 0 0 0 12" stroke="${color}" stroke-width="1.3" fill="none"/>`
+    }[ship.ability];
+    const flag = ship.ability === "radar" ? "" : `<path d="M${mid} 4 l13 3.5 l-13 3.5Z" fill="${color}"/>`;
+    return `<svg class="ship-art" viewBox="0 -4 120 70" aria-hidden="true">
+      ${rig}${flag}
+      <path d="M3 42 Q10 47 17 47 H104 Q111 47 117 42 L103 60 Q60 64 17 60 Z" fill="var(--hull)"/>
+      <path d="M12 50 H108" stroke="${color}" stroke-width="2"/>
+      ${detail}
+      <path d="M0 60 Q7.5 56 15 60 T30 60 T45 60 T60 60 T75 60 T90 60 T105 60 T120 60 V66 H0Z" fill="var(--water-2)" fill-opacity=".8"/>
+    </svg>`;
+  }
+
+  function shipHTML(ship, owner, targetable, refit) {
+    const tag = targetable || refit ? "button" : "div";
+    const attrs = targetable ? `type="button" data-target="s:${owner.id}:${ship.id}" aria-label="Attack ${targetName({ kind: "ship", owner, ship })}"`
+      : refit ? `type="button" data-refit="${ship.id}" aria-label="Reinforce ${shipName(ship)}"` : "";
+    const n = ship.cards.length;
+    const pips = Array.from({ length: n }, () => "<i></i>").join("");
+    return `<${tag} class="ship ${targetable ? "targetable" : ""} ${refit ? "reinforceable" : ""} ${G.fresh.has("s" + ship.id) ? "arrive" : ""}" data-ship="${ship.id}" style="--sc: var(--s-${ship.suit})" ${attrs}>
+      ${shipArt(ship)}
+      <span class="ship-name">${shipName(ship)}</span>
+      <span class="pips">${pips}</span>
+      <span class="ship-meta">${n} card${n === 1 ? "" : "s"} · ${ship.cards.map(cardLabel).join(" ")}</span>
+    </${tag}>`;
+  }
+
+  const ROCKS = `<svg viewBox="0 0 78 30" aria-hidden="true">
+    <path d="M6 26 Q12 12 22 16 Q26 8 34 14 L40 26Z" fill="#5d5a55"/>
+    <path d="M38 26 Q44 15 52 18 Q58 10 66 19 L72 26Z" fill="#6c6862"/>
+    <path d="M24 16 Q28 12 32 15 M50 18 Q55 13 60 15" stroke="#8d8880" stroke-width="1.5" fill="none"/>
+    <path d="M1 27 Q10 23 20 27 T39 27 T58 27 T77 27" stroke="white" stroke-opacity=".7" stroke-width="2" fill="none"/>
+  </svg>`;
+
+  // One captain's waters: their pennant, face-down hand (rivals), then island and fleet side by side
+  function territoryHTML(p, targets, refit = []) {
+    const isT = t => targets.some(x => x.owner === t.owner && (x.kind === "island" ? x.card === t.card : x.ship === t.ship));
+    const arrive = key => G.fresh.has(key) ? "arrive" : "";
+    const island = p.island.length
+      ? `<div class="isle" data-isle="${p.id}">${PALM}${p.island.map(card => {
+          const t = { kind: "island", owner: p, card };
+          return isT(t)
+            ? cardHTML(card, "button", `mini targetable ${arrive("c" + card.id)}`, `data-target="i:${p.id}:${card.id}"`)
+            : cardHTML(card, "div", `mini ${arrive("c" + card.id)}`);
+        }).join("")}</div>`
+      : `<div class="shoal" data-isle="${p.id}">${ROCKS}<span>Island lost</span></div>`;
+    const ships = p.ships.map(ship => shipHTML(ship, p, isT({ kind: "ship", owner: p, ship }), refit.includes(ship))).join("");
+    const n = p.hand.length;
+    const current = !G.over && G.turn === p.id;
+    return `<section class="territory ${current ? "current" : ""} ${p.out ? "out" : ""}" style="--sc: var(--s-${p.suit})" aria-label="${p.human ? "Your waters" : p.name}">
+      <div class="flag"><span class="badge">${SUITS[p.suit].sym}</span>${p.human ? "Your harbor" : p.name}${p.out ? " · Sunk" : ""}</div>
+      ${p.human ? "" : `<div class="fan-row" data-fan="${p.id}">${p.out ? "" : fanHTML(n)}<span class="meta">${n} card${n === 1 ? "" : "s"} in hand</span></div>`}
+      <div class="holdings" data-hold="${p.id}">${island}<div class="armada" data-fleet="${p.id}">${ships}</div></div>
+    </section>`;
+  }
+
+  function render() {
+    // Redrawn ships pick up their rocking where the old ones left off
+    document.documentElement.style.setProperty("--wave-t", `${-(performance.now() / 1000).toFixed(2)}s`);
+    const me = G.players[0];
+    const sel = selectedCards();
+    const targets = targeting() ? allTargets(sel) : [];
+    const current = G.players[G.turn];
+    const yourTurn = !G.over && G.turn === 0 && G.mode !== "wait" && G.mode !== "busy";
+
+    // Whose turn it is, across the top bar
+    $("#status").innerHTML = G.over
+      ? "The battle is over"
+      : current.human ? `<span class="who">Your</span> turn` : `<span class="who">${current.name}</span> is at the helm…`;
+
+    // The shared sea: rivals, mid-channel piles, then your waters
+    $("#rivals").innerHTML = G.players.slice(1).map(o => territoryHTML(o, targets)).join("");
+    const top = G.discard[G.discard.length - 1];
+    const canDraw = yourTurn && G.mode === "draw";
+    $("#midsea").innerHTML = `
+      <button type="button" class="pile" id="deck" data-act="draw" ${canDraw ? "" : "disabled"} aria-label="Draw pile, ${G.deck.length} cards${canDraw ? ". Click to draw" : ""}">
+        <span class="stack">${G.deck.length
+          ? Array.from({ length: Math.min(3, G.deck.length) }, () => `<i class="back"></i>`).join("")
+          : `<span class="slot"></span>`}</span>
+        <span class="pile-label">Draw pile · ${G.deck.length}</span>
+      </button>
+      <div class="pile" id="discard">
+        ${top ? cardHTML(top) : `<span class="slot"></span>`}
+        <span class="pile-label">Discard · ${G.discard.length}</span>
+      </div>
+      <ul class="ticker" aria-label="This round">${tickerHTML()}</ul>`;
+    const ticker = $("#midsea .ticker");
+    ticker.scrollTop = ticker.scrollHeight;
+
+    // Your hand tray
+    const fortifyOk = sel.length === 1 && canFortify(me, sel[0]);
+    const launchOk = canLaunch(me, sel);
+    const refitShips = reinforceShips(me, sel);
+    const attackCount = sel.length ? allTargets(sel).length : 0;
+    const cycleOk = sel.length === 3;
+
+    let hint, buttons;
+    if (G.over) {
+      hint = "The game is over. Start a new game from the top bar.";
+      buttons = [];
+    } else if (G.mode === "busy") {
+      hint = "Hold fast…";
+      buttons = [];
+    } else if (!yourTurn) {
+      hint = me.out ? "You are out of the game." : "Rival captains are moving. Your turn comes next.";
+      buttons = [];
+    } else if (G.mode === "draw") {
+      hint = `<b>Draw phase.</b> Draw a card to start your turn. You can also click the draw pile.`;
+      buttons = [["draw", "Draw a card", true, "primary"]];
+    } else if (targeting()) {
+      hint = attackCount
+        ? `<b>Choose a target.</b> Highlighted rival cards and ships can be destroyed with your selection.`
+        : `That selection can't hit anything. Use only the target's suit, or only other suits, never a mix. How to play has the details.`;
+      buttons = [["cancel", "Cancel attack", true]];
+    } else if (G.mode === "reinforce") {
+      hint = refitShips.length
+        ? `<b>Choose a ship.</b> Click the highlighted ship to add your ${sel.length} card${sel.length === 1 ? "" : "s"} to it.`
+        : `Your selection doesn't match any of your ships. Select cards of one ship's suit.`;
+      buttons = [["cancel", "Cancel", true]];
+    } else if (G.mode === "destroyer") {
+      hint = `<b>Destroyer launched.</b> Select cards for a free attack, or skip it.`;
+      buttons = [
+        ["attack", attackCount ? `Free attack (${attackCount} target${attackCount === 1 ? "" : "s"})` : "Free attack", attackCount > 0, "primary"],
+        ["skip", "Skip free attack", true]
+      ];
+    } else {
+      if (!sel.length) hint = "<b>Action phase.</b> Select cards from your hand, then build, attack, cycle or pass. Cards with a colored bar are your suit.";
+      else {
+        const can = [];
+        if (fortifyOk) can.push("fortify your island");
+        if (launchOk) can.push(`launch a ${sel.length}-card ship`);
+        if (refitShips.length) can.push(`reinforce ${refitShips.length === 1 ? "your " + shipName(refitShips[0]) : "a ship"} (+${sel.length} card${sel.length === 1 ? "" : "s"})`);
+        if (attackCount) can.push(`attack ${attackCount} target${attackCount === 1 ? "" : "s"}`);
+        if (cycleOk) can.push("cycle them for 3 new cards");
+        const blocked = refitShips.length ? "" : refitBlocked(me, sel);
+        hint = `<b>${sel.length} selected.</b> ` + (can.length ? "You can " + can.join(", ") + "." : "No action fits this selection yet.") + (blocked ? " " + blocked : "");
+      }
+      buttons = [
+        ["fortify", "Fortify island", fortifyOk],
+        ["launch", "Launch ship", launchOk],
+        ["reinforce", "Reinforce ship", refitShips.length > 0],
+        ["attack", "Attack", attackCount > 0, "primary"],
+        ["cycle", "Cycle 3 cards", cycleOk],
+        ["pass", "Pass", true]
+      ];
+    }
+
+    // The hand fans in a gentle arc: outer cards tilt and dip
+    const n = me.hand.length;
+    const mid = (n - 1) / 2;
+    const tilt = Math.min(3, 26 / Math.max(n, 1));
+    const dip = mid > 0 ? Math.min(1.5, 12 / (mid * mid)) : 0;
+    const handHTML = n
+      ? me.hand.map((c, i) => cardHTML(c, yourTurn ? "button" : "div",
+          `${G.selected.has(c.id) ? "sel" : ""} ${!c.joker && c.suit === me.suit ? "own" : ""} ${G.fresh.has("c" + c.id) ? "arrive" : ""}`,
+          `${yourTurn ? `data-hand="${c.id}" aria-pressed="${G.selected.has(c.id)}"` : ""} style="--rot:${((i - mid) * tilt).toFixed(1)}deg; --arc:${((i - mid) ** 2 * dip).toFixed(1)}px"`)).join("")
+      : `<span class="empty">Your hand is empty</span>`;
+
+    $("#you").innerHTML = territoryHTML(me, [], G.mode === "reinforce" ? refitShips : []);
+    $("#tray").style.setProperty("--sc", `var(--s-${me.suit})`);
+    $("#tray").innerHTML = `
+      <div class="tray-head"><span class="count">Your hand · ${n}</span><p class="hint"><span>${hint}</span></p></div>
+      <div class="hand" id="hand" style="--n:${Math.max(1, n)}">${handHTML}</div>
+      <div class="actions">${buttons.map(([act, label, on, cls]) =>
+        `<button type="button" class="btn ${cls || ""}" data-act="${act}" ${on ? "" : "disabled"}>${label}</button>`).join("")}</div>`;
+
+    // Log
+    $("#log").innerHTML = G.log.map(e =>
+      `<li style="${e.suit ? `--lc: var(--s-${e.suit})` : ""}">${tint(e.msg)}</li>`).join("");
+  }
+
+  // ---------- Input ----------
+
+  $("#board").addEventListener("click", e => {
+    const el = e.target.closest("[data-hand],[data-target],[data-refit],[data-act]");
+    if (!el || el.disabled) return;
+    if (G.over || G.turn !== 0 || G.mode === "wait" || G.mode === "busy") return;
+    if (el.dataset.hand) {
+      const id = +el.dataset.hand;
+      G.selected.has(id) ? G.selected.delete(id) : G.selected.add(id);
+      Sound.play("tick");
+      render();
+    } else if (el.dataset.target) {
+      if (!targeting()) return;
+      const t = parseTarget(el.dataset.target);
+      if (t) humanAttack(t);
+    } else if (el.dataset.refit) {
+      if (G.mode !== "reinforce") return;
+      const me = G.players[0], sel = selectedCards();
+      const ship = reinforceShips(me, sel).find(s => s.id === +el.dataset.refit);
+      if (ship) {
+        busy();
+        doReinforce(me, ship, sel).then(ok => { if (ok) finishHuman(); });
+      }
+    } else {
+      humanAction(el.dataset.act);
+    }
+  });
+
+  // Log and rules drawers: one open at a time, closed with their button, the Close button or Escape
+  const drawerButtons = [...document.querySelectorAll("[data-drawer]")];
+  function openDrawer(id) {
+    for (const d of document.querySelectorAll(".drawer")) d.classList.toggle("open", d.id === id);
+    for (const b of drawerButtons) b.setAttribute("aria-expanded", String(b.dataset.drawer === id));
+  }
+  for (const b of drawerButtons) {
+    b.addEventListener("click", () => openDrawer($("#" + b.dataset.drawer).classList.contains("open") ? null : b.dataset.drawer));
+  }
+  for (const b of document.querySelectorAll("[data-close]")) b.addEventListener("click", () => openDrawer(null));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#modal").hidden) openDrawer(null); });
+
+  $("#btn-new").addEventListener("click", () => setupModal());
+
+  // Sound drawer: on/off, effects volume, sea volume and a test shot
+  const paintSound = () => {
+    $("#snd-on").checked = !Sound.muted;
+    $("#snd-fx").value = Sound.prefs.fx;
+    $("#snd-sea").value = Sound.prefs.sea;
+    $("#btn-sound").textContent = Sound.muted ? "Sound off" : "Sound";
+  };
+  $("#snd-on").addEventListener("change", () => { Sound.toggle(); paintSound(); Sound.play("tick"); });
+  $("#snd-fx").addEventListener("input", e => Sound.set("fx", +e.target.value));
+  $("#snd-fx").addEventListener("change", () => Sound.play("draw"));
+  $("#snd-sea").addEventListener("input", e => Sound.set("sea", +e.target.value));
+  $("#snd-test").addEventListener("click", () => { Sound.play("cannon"); Sound.play("crash", 0.6); });
+  paintSound();
+
+  const motionBtn = $("#btn-motion");
+  const paintMotion = () => {
+    motionBtn.textContent = FX.motion ? "Motion on" : "Motion off";
+    motionBtn.setAttribute("aria-pressed", String(FX.motion));
+    document.documentElement.classList.toggle("still", !FX.motion);
+  };
+  motionBtn.addEventListener("click", () => {
+    FX.motion = !FX.motion;
+    try { localStorage.setItem("cots-motion", FX.motion ? "1" : "0"); } catch (e) {}
+    paintMotion();
+  });
+  paintMotion();
+  document.addEventListener("pointerdown", Sound.unlock);
+  document.addEventListener("keydown", Sound.unlock);
+
+  newGame("S", 2);
+</script>
