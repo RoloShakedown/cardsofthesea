@@ -791,7 +791,8 @@
     display: grid; place-items: center; padding: 24px 16px; box-sizing: border-box; color: #fff8e6;
   }
   .finale[hidden] { display: none; }
-  .finale > .layer { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .finale-bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+  .finale .layer { position: absolute; inset: 0; }
   .finale-card { display: grid; justify-items: center; gap: 12px; text-align: center; max-width: 620px; }
   .finale .kicker { margin: 0; font: 800 0.85rem var(--f-body); letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.9; }
   .finale h1 { font-size: clamp(4rem, 16vw, 8.5rem); line-height: 0.9; animation: finale-in 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
@@ -808,12 +809,12 @@
   .finale .title-actions .btn:not(.primary) { background: rgba(0, 0, 0, 0.3); color: #f1e2c0; border-color: #a87c33; box-shadow: none; }
 
   /* Victory: a golden sunset, the sun on the water, gold coins raining and fireworks overhead */
-  .finale.win > .sky {
+  .finale.win .sky {
     background:
       radial-gradient(circle at 50% 56%, #fff3c0 0 5%, rgba(255, 214, 120, 0.85) 9%, rgba(255, 170, 80, 0) 34%),
       linear-gradient(180deg, #3b2a5a 0%, #b5525a 26%, #f0974e 46%, #f7c96a 56%, #2f6f86 57%, #1d4e63 78%, #123545 100%);
   }
-  .finale.win > .waves {
+  .finale.win .waves {
     top: 57%;
     background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='30'%3E%3Cpath d='M0 15 Q25 6 50 15 T100 15 T150 15 T200 15' fill='none' stroke='%23ffe3a0' stroke-opacity='.35' stroke-width='2'/%3E%3C/svg%3E") 0 0 / 200px 30px;
     right: -200px; animation: drift-200 18s linear infinite;
@@ -842,14 +843,14 @@
   }
 
   /* Defeat: a storm, driving rain, lightning, and your flagship slipping under */
-  .finale.lose > .sky { background: radial-gradient(ellipse 80% 50% at 50% 30%, #2a3c46, transparent 70%), linear-gradient(180deg, #0a1216 0%, #24363f 56%, #355561 57%, #13303a 60%, #07141a 100%); }
-  .finale.lose > .rain {
+  .finale.lose .sky { background: radial-gradient(ellipse 80% 50% at 50% 30%, #2a3c46, transparent 70%), linear-gradient(180deg, #0a1216 0%, #24363f 56%, #355561 57%, #13303a 60%, #07141a 100%); }
+  .finale.lose .rain {
     inset: -200px 0 0 -200px;
     background: repeating-linear-gradient(105deg, transparent 0 18px, rgba(190, 215, 230, 0.16) 18px 19px);
     animation: rain 0.5s linear infinite;
   }
   @keyframes rain { to { transform: translate(40px, 150px); } }
-  .finale.lose > .bolt { background: #eaf4ff; opacity: 0; animation: lightning 7s linear 1.2s infinite; }
+  .finale.lose .bolt { background: #eaf4ff; opacity: 0; animation: lightning 7s linear 1.2s infinite; }
   @keyframes lightning { 0%, 6%, 9%, 100% { opacity: 0; } 7% { opacity: 0.55; } 8% { opacity: 0.1; } 8.5% { opacity: 0.4; } }
   .finale.lose h1 { color: #dce6ea; text-shadow: 0 4px 0 #0b1418, 0 0 30px rgba(160, 200, 220, 0.45); }
   .finale.lose .kicker { color: #e8806e; }
@@ -2385,8 +2386,8 @@
     const flagship = { suit: me.suit, ability: "destroyer", cards: [1, 2, 3, 4] };
     box.className = `finale ${won ? "win" : "lose"}`;
     box.innerHTML = `
-      <div class="layer sky"></div>
-      ${won ? `<div class="layer waves"></div><div class="layer" id="fw-sky">${coins}</div>` : `<div class="layer rain"></div><div class="layer bolt"></div>`}
+      <div class="finale-bg"><div class="layer sky"></div>
+      ${won ? `<div class="layer waves"></div><div class="layer" id="fw-sky">${coins}</div>` : `<div class="layer rain"></div><div class="layer bolt"></div>`}</div>
       <div class="finale-card">
         <p class="kicker">${won ? "The sea is yours" : "Lost at sea"}</p>
         <h1 id="finale-title">${won ? "Victory!" : "Sunk"}</h1>
