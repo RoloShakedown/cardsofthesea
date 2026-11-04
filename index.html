@@ -756,6 +756,112 @@
   .title-actions .btn[aria-pressed="true"] { background: rgba(233, 180, 80, 0.25); }
   .still .title-screen::before { animation: none; }
 
+  /* ---------- Last-move markers ---------- */
+  /* Small badges in the color of the captain who acted. They stay until that captain's next turn. */
+  .ship { position: relative; }
+  .mark-stack { position: absolute; top: -10px; right: -10px; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .mark {
+    padding: 1px 7px; border-radius: 999px; background: var(--mc); color: #fff;
+    font: 800 0.68rem/1.45 var(--f-body); letter-spacing: 0.02em; white-space: nowrap;
+    box-shadow: 0 0 0 2px #fff8e6, 0 2px 5px rgba(0, 0, 0, 0.45);
+    animation: mark-life 4.5s linear both;
+  }
+  /* Pop in, hold, then fade away */
+  @keyframes mark-life {
+    0% { transform: scale(0.3); opacity: 0; }
+    6% { transform: scale(1.12); opacity: 1; }
+    10% { transform: scale(1); }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  /* What's left of a destroyed island card or a sunk ship, until the attacker's next turn */
+  .wreck-wrap { position: relative; display: grid; justify-items: center; }
+  .card.wreck { filter: grayscale(0.75) sepia(0.45) brightness(0.75); opacity: 0.6; }
+  .card.wreck::after {
+    content: ""; position: absolute; inset: 0; border-radius: 7px;
+    background: radial-gradient(circle at 50% 58%, rgba(35, 18, 4, 0.75), rgba(35, 18, 4, 0.2) 45%, transparent 70%);
+  }
+  .wreck-ship { opacity: 0.5; filter: grayscale(0.85); }
+  .wreck-ship .ship-art { animation: none; transform: translateY(10px) rotate(-13deg); }
+  .still .mark { animation: none; }
+
+  /* ---------- Victory and defeat ---------- */
+  .finale {
+    position: fixed; inset: 0; z-index: 16; overflow: hidden auto; isolation: isolate;
+    display: grid; place-items: center; padding: 24px 16px; box-sizing: border-box; color: #fff8e6;
+  }
+  .finale[hidden] { display: none; }
+  .finale > .layer { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .finale-card { display: grid; justify-items: center; gap: 12px; text-align: center; max-width: 620px; }
+  .finale .kicker { margin: 0; font: 800 0.85rem var(--f-body); letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.9; }
+  .finale h1 { font-size: clamp(4rem, 16vw, 8.5rem); line-height: 0.9; animation: finale-in 0.9s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+  @keyframes finale-in { from { transform: scale(0.3) rotate(-6deg); opacity: 0; } }
+  .finale-sub { margin: 0; font-family: var(--f-log); font-style: italic; font-size: clamp(1.05rem, 3.5vw, 1.35rem); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6); }
+  .finale-ship { width: clamp(9rem, 34vw, 13rem); }
+  .finale-ship .ship-art { width: 100%; }
+  .finale-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 4px 0; padding: 0; list-style: none; }
+  .finale-stats li {
+    display: grid; min-width: 6.5rem; padding: 8px 12px; border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 220, 150, 0.45); font-size: 0.82rem;
+  }
+  .finale-stats b { font-family: var(--f-display); font-weight: 400; font-size: 2rem; line-height: 1; color: #f3c35a; }
+  .finale .title-actions .btn:not(.primary) { background: rgba(0, 0, 0, 0.3); color: #f1e2c0; border-color: #a87c33; box-shadow: none; }
+
+  /* Victory: a golden sunset, the sun on the water, gold coins raining and fireworks overhead */
+  .finale.win > .sky {
+    background:
+      radial-gradient(circle at 50% 56%, #fff3c0 0 5%, rgba(255, 214, 120, 0.85) 9%, rgba(255, 170, 80, 0) 34%),
+      linear-gradient(180deg, #3b2a5a 0%, #b5525a 26%, #f0974e 46%, #f7c96a 56%, #2f6f86 57%, #1d4e63 78%, #123545 100%);
+  }
+  .finale.win > .waves {
+    top: 57%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='30'%3E%3Cpath d='M0 15 Q25 6 50 15 T100 15 T150 15 T200 15' fill='none' stroke='%23ffe3a0' stroke-opacity='.35' stroke-width='2'/%3E%3C/svg%3E") 0 0 / 200px 30px;
+    right: -200px; animation: drift-200 18s linear infinite;
+  }
+  .finale.win h1 { color: #ffd66b; text-shadow: 0 4px 0 #7a3d12, 0 8px 30px rgba(255, 190, 80, 0.8); }
+  .coin {
+    position: absolute; top: -30px; width: 16px; height: 16px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff4b8, #f2c03e 45%, #a87217 100%);
+    box-shadow: inset 0 0 0 2px rgba(120, 70, 10, 0.5);
+    animation: coin-fall var(--d) linear var(--delay) infinite;
+  }
+  @keyframes coin-fall {
+    0% { transform: translateY(0) rotateY(0deg); opacity: 0; }
+    8% { opacity: 1; }
+    100% { transform: translateY(110vh) rotateY(1080deg); opacity: 0.9; }
+  }
+  .fw { position: absolute; width: 0; height: 0; }
+  .fw i {
+    position: absolute; left: -3px; top: -3px; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--fc); box-shadow: 0 0 8px var(--fc);
+    animation: fw-burst 1.3s cubic-bezier(0.1, 0.7, 0.3, 1) forwards;
+  }
+  @keyframes fw-burst {
+    from { transform: rotate(var(--a)) translateX(0); opacity: 1; }
+    to { transform: rotate(var(--a)) translateX(var(--r)) translateY(30px); opacity: 0; }
+  }
+
+  /* Defeat: a storm, driving rain, lightning, and your flagship slipping under */
+  .finale.lose > .sky { background: radial-gradient(ellipse 80% 50% at 50% 30%, #2a3c46, transparent 70%), linear-gradient(180deg, #0a1216 0%, #24363f 56%, #355561 57%, #13303a 60%, #07141a 100%); }
+  .finale.lose > .rain {
+    inset: -200px 0 0 -200px;
+    background: repeating-linear-gradient(105deg, transparent 0 18px, rgba(190, 215, 230, 0.16) 18px 19px);
+    animation: rain 0.5s linear infinite;
+  }
+  @keyframes rain { to { transform: translate(40px, 150px); } }
+  .finale.lose > .bolt { background: #eaf4ff; opacity: 0; animation: lightning 7s linear 1.2s infinite; }
+  @keyframes lightning { 0%, 6%, 9%, 100% { opacity: 0; } 7% { opacity: 0.55; } 8% { opacity: 0.1; } 8.5% { opacity: 0.4; } }
+  .finale.lose h1 { color: #dce6ea; text-shadow: 0 4px 0 #0b1418, 0 0 30px rgba(160, 200, 220, 0.45); }
+  .finale.lose .kicker { color: #e8806e; }
+  .finale.lose .finale-ship .ship-art { animation: founder 5s ease-in 0.6s forwards; }
+  @keyframes founder {
+    0% { transform: none; opacity: 1; }
+    30% { transform: translateY(4px) rotate(-6deg); opacity: 1; }
+    100% { transform: translateY(48px) rotate(-28deg); opacity: 0.12; }
+  }
+  .still .finale h1, .still .finale .waves, .still .finale .rain, .still .finale .coin, .still .finale .ship-art { animation: none; }
+  .still .finale .coin, .still .finale .bolt { display: none; }
+
   /* ---------- Tutorial mode ---------- */
   /* The sea and the coach panel share a row; the panel takes the sea's height and scrolls on its own */
   .waters { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; }
@@ -786,13 +892,13 @@
   .opts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.88rem; line-height: 1.35; }
   .opts li { padding: 5px 8px 6px; background: var(--panel-2); border-left: 4px solid var(--frame); border-radius: 3px; }
   .opts li b { display: block; }
+  .opts .way { display: block; padding-left: 0.9em; text-indent: -0.9em; }
+  .opts .way::before { content: "• "; color: var(--ink-soft); }
   .opts li.ok { border-left-color: var(--s-C); }
   .opts li.ok b::before { content: "✓ "; color: var(--s-C); }
   .opts li.no { border-left-color: var(--danger); }
   .opts li.no b::before { content: "✗ "; color: var(--danger); }
   .opts li.more { background: none; border-left-color: transparent; font-style: italic; color: var(--ink-soft); padding-block: 0; }
-  .why li { font-family: var(--f-log); font-style: italic; border-left-color: var(--sc, var(--frame)); }
-  .why li .cl { font-family: var(--f-body); font-style: normal; }
   /* Hover bubble on a card or ship: what it would take to destroy it, or whether your selection can */
   .tip {
     position: fixed; z-index: 14; left: 0; top: 0; max-width: 270px; box-sizing: border-box;
@@ -948,6 +1054,9 @@
     </div>
   </div>
 </section>
+
+<!-- Victory or defeat, drawn by showFinale() when the game ends -->
+<section class="finale" id="finale" hidden aria-labelledby="finale-title"></section>
 
 <!-- Flying cards, cannonballs and splashes are drawn here, above the board -->
 <div class="fx" id="fx" aria-hidden="true"></div>
@@ -1339,9 +1448,11 @@
     shuffle(deck);
     for (let k = 0; k < 7; k++) for (const p of players) p.hand.push(deck.pop());
     players.forEach(sortHand);
-    G = { players, deck, discard: [], turn: 0, mode: "wait", selected: new Set(), log: [], logCount: 0, turnStarts: [], over: false, fresh: new Set(), why: [], whyCount: 0 };
+    G = { players, deck, discard: [], turn: 0, mode: "wait", selected: new Set(), log: [], logCount: 0, turnStarts: [], over: false, fresh: new Set(), marks: [],
+      stats: { turns: 0, launched: 0, destroyed: 0, sunk: 0 } };
     log(`A new voyage begins. You sail under ${SUITS[mySuit].name} against ${rivals} rival captain${rivals > 1 ? "s" : ""}.`);
     $("#title").hidden = true;
+    hideFinale();
     startTurn();
   }
 
@@ -1460,7 +1571,7 @@
     ship.cards.push(...cards);
     Sound.play("launch");
     log(`${who(p)} reinforced ${poss(p)} ${shipName(ship)} with ${cards.map(cardLabel).join(" + ")}, bringing it to ${ship.cards.length} cards.`, p);
-    if (!p.human) explain(`${p.name} reinforced their ${shipName(ship)} with ${labels(cards)}. Cards of a ship's suit can be added while its captain's island stands, up to ${SHIP_MAX}.`, p);
+    markMove("plus", p, p, { ship: ship.id, n: cards.length });
   }
 
   function fortify(p, card) {
@@ -1469,9 +1580,7 @@
     Sound.play("fortify");
     const note = card.joker ? " as a defense card" : "";
     log(`${who(p)} fortified ${poss(p)} Main Island with ${cardLabel(card)}${note}.`, p);
-    if (!p.human) explain(card.joker
-      ? `${p.name} put a Joker on their island. It defends as a King of their suit (${SUITS[p.suit].sym}).`
-      : `${p.name} fortified with ${cardLabel(card)}. A captain's own suit (${SUITS[p.suit].sym}) goes on their Main Island.`, p);
+    markMove("new-card", p, p, { card: card.id });
   }
 
   function launch(p, cards, ability) {
@@ -1480,10 +1589,8 @@
     p.ships.push(ship);
     Sound.play("launch");
     log(`${who(p)} launched a ${shipName(ship)} with ${cards.length} cards.`, p);
-    if (!p.human) {
-      const bonus = { destroyer: "The Destroyer bonus gives a free attack right away.", supply: "The Supply Boat bonus draws 2 extra cards.", radar: "The Radar Ship bonus lets them reorder the top of the draw pile." }[ability];
-      explain(`${p.name} launched a ${shipName(ship)}: ${cards.length} cards of one suit that isn't their own. ${bonus}`, p);
-    }
+    markMove("new-ship", p, p, { ship: ship.id });
+    if (p.human) G.stats.launched++;
     return ship;
   }
 
@@ -1521,7 +1628,6 @@
     Sound.play("draw");
     const n = cards.length;
     log(`${who(p)} cycled ${n} card${n > 1 ? "s" : ""}${p.human ? ` (${cards.map(cardLabel).join(", ")})` : ""} and drew ${got} new card${got === 1 ? "" : "s"}.`, p);
-    if (!p.human) explain(`${p.name} cycled: discarded 3 cards and drew 3 new ones. That used their action for the turn.`, p);
   }
 
   // Rival captains knock the highest cards off a ship
@@ -1533,8 +1639,6 @@
   function resolveAttack(att, cards, t, lost) {
     const kind = attackKind(cards, t);
     if (!kind) return false;
-    // Explained before anything changes, so ship counts read as they were when the shots were fired
-    explain(`${who(att)} hit ${targetName(t)}. ${explainAttack(cards, t).text}`, att);
     removeFromHand(att, cards);
     G.discard.push(...cards);
     const def = t.owner;
@@ -1546,9 +1650,8 @@
       G.discard.push(t.card);
       log(`${cardLabel(t.card)} was destroyed.`, def);
       notice(def.human ? `Your ${cardLabel(t.card)} was destroyed` : `${def.name} lost ${cardLabel(t.card)}`, def);
-      if (!def.island.length) explain(def.human
-        ? "Your Main Island is gone. You can't fortify, launch or reinforce anymore, but your ships can still fight."
-        : `${def.name}'s Main Island is gone. They can't fortify, launch or reinforce anymore, but their ships can still fight.`, def);
+      markMove("wreck", att, def, { card: t.card });
+      if (att.human) G.stats.destroyed++;
     } else {
       const hits = shipHits(cards, t.ship);
       if (hits >= t.ship.cards.length) {
@@ -1556,6 +1659,8 @@
         G.discard.push(...t.ship.cards);
         log(`The ${shipName(t.ship)} sank.`, def);
         notice(`${def.human ? "Your" : poss(def)} ${shipName(t.ship)} sank`, def);
+        markMove("sunk", att, def, { ship: { ...t.ship, cards: [...t.ship.cards] } });
+        if (att.human) G.stats.sunk++;
       } else {
         if (!lost || lost.length !== hits) lost = aiPickLosses(t.ship, hits);
         const gone = new Set(lost.map(c => c.id));
@@ -1563,6 +1668,7 @@
         G.discard.push(...lost);
         const left = t.ship.cards.length;
         log(`The ${shipName(t.ship)} lost ${lost.map(cardLabel).join(", ")}. ${left} card${left === 1 ? "" : "s"} left.`, def);
+        markMove("hit", att, def, { ship: t.ship.id, n: hits });
       }
     }
 
@@ -1572,7 +1678,6 @@
       def.hand = [];
       log(def.human ? "You have no island cards or ships left. You are out." : `${def.name} has no island cards or ships left and is out.`, def);
       notice(def.human ? "You are out" : `${def.name} is out!`, def);
-      explain(`${def.human ? "You are" : def.name + " is"} out: no island cards or ships are left.`, def);
     }
     render();
     return true;
@@ -1813,7 +1918,10 @@
     if (G.over) return;
     const p = G.players[G.turn];
     G.turnStarts.push(G.logCount);
+    // A captain's markers from their last turn clear as their next turn begins
+    G.marks = G.marks.filter(m => m.by !== p.id);
     if (p.human) {
+      G.stats.turns++;
       G.mode = "draw";
       G.selected.clear();
       render();
@@ -1967,7 +2075,6 @@
     if (junk.length >= 3) { await doCycle(p, junk.slice(0, 3)); return; }
 
     log(`${p.name} passed.`, p);
-    explain(`${p.name} passed. Any captain can end a turn without acting.`, p);
   }
 
   function aiRadar(p, n) {
@@ -2263,14 +2370,79 @@
     }, 3200);
   }
 
+  // ---------- Victory and defeat ----------
+  // A full-screen finale: a golden sunset with coins and fireworks, or a storm with your flagship going down
+
+  let fireworks = null;
+
   function endModal(won, winner) {
     Sound.play(won ? "win" : "lose");
-    const html = won
-      ? `<h2 id="modal-title">Victory</h2><p>Every rival island and fleet is destroyed. The sea is yours.</p>`
-      : `<h2 id="modal-title">Sunk</h2><p>Your Main Island and fleet are gone.${winner ? ` ${winner.name} rules the sea.` : ""}</p>`;
-    modal(html, [{ label: "Play again", cls: "primary", value: true }, { label: "Look at the board", value: false }])
-      .then(again => { if (again) setupModal(); });
+    const me = G.players[0], s = G.stats;
+    const box = $("#finale");
+    const stat = (n, label) => `<li><b>${n}</b>${label}</li>`;
+    const coins = won ? Array.from({ length: 26 }, () =>
+      `<i class="coin" style="left:${(Math.random() * 100).toFixed(1)}%; --d:${(3 + Math.random() * 3).toFixed(2)}s; --delay:${(-Math.random() * 6).toFixed(2)}s"></i>`).join("") : "";
+    const flagship = { suit: me.suit, ability: "destroyer", cards: [1, 2, 3, 4] };
+    box.className = `finale ${won ? "win" : "lose"}`;
+    box.innerHTML = `
+      <div class="layer sky"></div>
+      ${won ? `<div class="layer waves"></div><div class="layer" id="fw-sky">${coins}</div>` : `<div class="layer rain"></div><div class="layer bolt"></div>`}
+      <div class="finale-card">
+        <p class="kicker">${won ? "The sea is yours" : "Lost at sea"}</p>
+        <h1 id="finale-title">${won ? "Victory!" : "Sunk"}</h1>
+        <p class="finale-sub">${won
+          ? `Every rival island and fleet lies on the sea floor. Long live the Captain of ${SUITS[me.suit].name}!`
+          : `Your Main Island and fleet are gone.${winner ? ` ${winner.name} rules the sea.` : ""}`}</p>
+        <div class="finale-ship" aria-hidden="true">${shipArt(flagship)}</div>
+        <ul class="finale-stats">
+          ${stat(s.turns, s.turns === 1 ? "turn" : "turns")}
+          ${stat(s.destroyed, "island cards destroyed")}
+          ${stat(s.sunk, s.sunk === 1 ? "ship sunk" : "ships sunk")}
+          ${stat(s.launched, s.launched === 1 ? "ship launched" : "ships launched")}
+        </ul>
+        <div class="title-actions">
+          <button class="btn primary" type="button" data-finale="again">Play again</button>
+          <button class="btn" type="button" data-finale="board">Look at the board</button>
+          <button class="btn" type="button" data-finale="title">Title screen</button>
+        </div>
+      </div>`;
+    box.hidden = false;
+    box.querySelector(".btn.primary").focus();
+    clearInterval(fireworks);
+    if (won && FX.motion) {
+      // A firework every so often, somewhere in the sky above the horizon
+      const colors = ["#ffd66b", "#ff8a5c", "#8fe3a2", "#9cc8ff", "#f5a8ff", "#fff3c0"];
+      const burst = () => {
+        const sky = $("#fw-sky");
+        if (!sky || document.hidden) return;
+        const fw = document.createElement("div");
+        fw.className = "fw";
+        fw.style.left = `${10 + Math.random() * 80}%`;
+        fw.style.top = `${8 + Math.random() * 38}%`;
+        const color = pick(colors), r = 50 + Math.random() * 50;
+        fw.innerHTML = Array.from({ length: 16 }, (_, i) =>
+          `<i style="--a:${i * 22.5}deg; --r:${r.toFixed(0)}px; --fc:${color}"></i>`).join("");
+        sky.appendChild(fw);
+        setTimeout(() => fw.remove(), 1400);
+      };
+      burst();
+      fireworks = setInterval(burst, 650);
+    }
   }
+
+  function hideFinale() {
+    clearInterval(fireworks);
+    $("#finale").hidden = true;
+    $("#finale").innerHTML = "";
+  }
+
+  $("#finale").addEventListener("click", e => {
+    const b = e.target.closest("[data-finale]");
+    if (!b) return;
+    hideFinale();
+    if (b.dataset.finale === "again") setupModal();
+    else if (b.dataset.finale === "title") $("#title").hidden = false;
+  });
 
   // ---------- Rendering ----------
 
@@ -2523,12 +2695,72 @@
       `<li style="${e.suit ? `--lc: var(--s-${e.suit})` : ""}">${tint(e.msg)}</li>`).join("");
 
     // Tutorial panel, and a hover bubble that follows its card or ship through the redraw
+    paintMarks();
     paintCoach(yourTurn);
     paintHints(yourTurn);
     if (!$("#tip").hidden) {
       const el = Tutor.on && Tutor.tipKey && $("#board").querySelector(".sea " + Tutor.tipKey);
       if (el) showTip(el);
       else hideTip();
+    }
+  }
+
+  // ---------- Last-move markers ----------
+  // Every move leaves a small badge on the board in the acting captain's color: New, +2, −2, a scorched
+  // card where an island card was destroyed, or the wreck of a sunk ship. A captain's markers clear when
+  // their next turn starts, so when your turn comes you can see everything that happened since your last one.
+
+  function markMove(type, by, owner, data) {
+    if (G) G.marks.push({ type, by: by.id, owner: owner.id, at: performance.now(), ...data });
+  }
+
+  // The badge text fades after a few seconds; the scorched card or wreck stays until the captain's next turn
+  const MARK_LIFE = 4500;
+
+  function paintMarks() {
+    const sea = $("#board .sea");
+    let age = 0;
+    // Each redraw rebuilds the badge partway through its fade, so it never restarts
+    const badge = (el, text, title, suit) => {
+      if (age >= MARK_LIFE) return;
+      let stack = el.querySelector(":scope > .mark-stack");
+      if (!stack) { stack = document.createElement("span"); stack.className = "mark-stack"; el.appendChild(stack); }
+      stack.insertAdjacentHTML("beforeend", `<span class="mark" style="--mc: var(--s-${suit}); animation-delay: -${age.toFixed(0)}ms" title="${title}">${text}</span>`);
+      const b = stack.lastElementChild;
+      setTimeout(() => b.remove(), MARK_LIFE - age);
+    };
+    for (const m of G.marks) {
+      age = performance.now() - m.at;
+      const by = G.players[m.by], owner = G.players[m.owner], sym = SUITS[by.suit].sym;
+      const ship = m.ship && sea.querySelector(`[data-ship="${m.ship.id || m.ship}"]`);
+      if (m.type === "new-card") {
+        const el = sea.querySelector(`.isle [data-cid="${m.card}"]`);
+        if (el) badge(el, "New", `${who(by)} fortified with this card`, by.suit);
+      } else if (m.type === "new-ship" && ship) {
+        badge(ship, "New", `${who(by)} launched this ship`, by.suit);
+      } else if (m.type === "plus" && ship) {
+        badge(ship, `+${m.n}`, `${who(by)} added ${plural(m.n, "card")}`, by.suit);
+      } else if (m.type === "hit" && ship) {
+        badge(ship, `${sym} −${m.n}`, `${who(by)} knocked ${plural(m.n, "card")} off this ship`, by.suit);
+      } else if (m.type === "wreck") {
+        // A scorched ghost of the destroyed card, without its card id so animations never mistake it for the real one
+        const isle = sea.querySelector(`[data-isle="${owner.id}"]`);
+        if (!isle) continue;
+        const wrap = document.createElement("div");
+        wrap.className = "wreck-wrap";
+        wrap.innerHTML = cardHTML(m.card, "div", "mini wreck").replace(/ data-cid="\d+"/, "");
+        isle.appendChild(wrap);
+        badge(wrap, `${sym} Destroyed`, `${who(by)} destroyed ${poss(owner)} ${cardLabel(m.card)}`, by.suit);
+      } else if (m.type === "sunk") {
+        const fleet = sea.querySelector(`[data-fleet="${owner.id}"]`);
+        if (!fleet) continue;
+        const wrap = document.createElement("div");
+        wrap.className = "wreck-wrap";
+        wrap.innerHTML = `<div class="ship wreck-ship" style="--sc: var(--s-${m.ship.suit})">${shipArt(m.ship)}
+          <span class="ship-name">${shipName(m.ship)}</span><span class="ship-meta">Sunk</span></div>`;
+        fleet.appendChild(wrap);
+        badge(wrap, `${sym} Sunk`, `${who(by)} sank ${poss(owner)} ${shipName(m.ship)}`, by.suit);
+      }
     }
   }
 
@@ -2595,47 +2827,40 @@
     return `${joker}Worth ${need}. To destroy it: ${sym} cards adding up to ${need} or more, a ${rankLabel(need)} of another suit, ${need} off-suit cards, or a Joker.`;
   }
 
-  // A cheap way for your hand to hit a target, if there is one (used for the coach's ideas)
-  function attackIdea(hand, t) {
+  // Every way your hand can hit a target (Jokers aside, which have their own line), for the coach's ideas
+  function attackWays(hand, t) {
     const pool = hand.filter(c => !c.joker).sort((a, b) => a.rank - b.rank);
-    const opts = [];
+    const ways = [];
     if (t.kind === "ship") {
-      const n = t.ship.cards.length;
-      const same = pool.filter(c => c.suit === t.ship.suit), ammo = pool.filter(c => c.suit !== t.ship.suit);
-      if (same.length) opts.push(same.slice(0, n));
-      const pairs = Math.min(n, Math.floor(ammo.length / 2));
-      if (pairs) opts.push(ammo.slice(0, pairs * 2));
-    } else {
-      const suit = islandSuit(t), need = strength(t.card);
-      const one = pool.find(c => c.suit === suit && c.rank >= need);
-      if (one) opts.push([one]);
-      const match = pool.find(c => c.suit !== suit && c.rank === need);
-      if (match) opts.push([match]);
+      const n = t.ship.cards.length, sym = SUITS[t.ship.suit].sym;
+      const same = pool.filter(c => c.suit === t.ship.suit).length;
+      const pairs = Math.floor(pool.filter(c => c.suit !== t.ship.suit).length / 2);
+      const sinks = k => k >= n ? ", enough to sink it" : "";
+      if (same) ways.push(`${sym} cards knock off 1 each. You have ${same}${sinks(same)}.`);
+      if (pairs) ways.push(`Pairs of other cards knock off 1 each. You have ${plural(pairs, "pair")}${sinks(pairs)}.`);
+      return ways;
+    }
+    const suit = islandSuit(t), sym = SUITS[suit].sym, need = strength(t.card);
+    const same = pool.filter(c => c.suit === suit);
+    const singles = same.filter(c => c.rank >= need);
+    if (singles.length) ways.push(`Same-Suit Strike: ${singles.map(cardLabel).join(" or ")} on its own.`);
+    else {
       const picked = [];
       let dmg = 0;
-      for (const c of pool.filter(c => c.suit === suit).reverse()) { if (dmg >= need) break; picked.push(c); dmg += c.rank; }
-      if (dmg >= need) opts.push(picked);
-      const ammo = pool.filter(c => c.suit !== suit);
-      if (ammo.length >= need) opts.push(ammo.slice(0, need));
+      for (const c of [...same].reverse()) { if (dmg >= need) break; picked.push(c); dmg += c.rank; }
+      if (dmg >= need) ways.push(`Same-Suit Strike: ${labels(picked)} add up to ${dmg}.`);
     }
-    const ok = opts.filter(o => attackKind(o, t)).sort((a, b) => a.length - b.length);
-    if (ok.length) return ok[0];
-    const joker = hand.find(c => c.joker);
-    return joker ? [joker] : null;
+    const matches = pool.filter(c => c.suit !== suit && c.rank === need);
+    if (matches.length) ways.push(`Matching-Value Strike: ${matches.map(cardLabel).join(" or ")}.`);
+    const ammo = pool.filter(c => c.suit !== suit).length;
+    if (ammo >= need) ways.push(`Off-Suit Volley: any ${need} of your ${ammo} non-${sym} cards.`);
+    return ways;
   }
 
   const rivalTargets = () => alive().filter(o => !o.human).flatMap(o => [
     ...o.island.map(card => ({ kind: "island", owner: o, card })),
     ...o.ships.map(ship => ({ kind: "ship", owner: o, ship }))
   ]);
-
-  // Record a move and the rule behind it, for the coach's "Moves explained" list
-  function explain(text, p) {
-    if (!G) return;
-    G.whyCount++;
-    G.why.unshift({ text, suit: p ? p.suit : null, n: G.whyCount });
-    if (G.why.length > 12) G.why.pop();
-  }
 
   // `key` is a selector for the board piece this line is about; hovering the line makes that piece pulse
   const li = (cls, head, text, key) =>
@@ -2691,12 +2916,11 @@
         if (fits && room) items.push(li("ok", `${tag("reinforce")} your ${shipName(ship)}`, `You have ${plural(fits, SUITS[ship.suit].sym + " card")} to add. It has room for ${room} more (6 max).`, `[data-ship="${ship.id}"]`));
       }
     }
-    const attacks = rivalTargets().map(t => ({ t, cards: attackIdea(me.hand, t) })).filter(a => a.cards)
-      .sort((a, b) => (a.cards[0].joker ? 1 : 0) - (b.cards[0].joker ? 1 : 0) || a.cards.length - b.cards.length);
-    for (const a of attacks.slice(0, 4)) {
-      items.push(li("ok", `${tag("attack")} ${targetName(a.t)} with ${labels(a.cards)}`, explainAttack(a.cards, a.t).text, tkey(a.t)));
+    // Every rival card and ship your hand can hit, with every way to do it
+    const attacks = rivalTargets().map(t => ({ t, ways: attackWays(me.hand, t) })).filter(a => a.ways.length);
+    for (const a of attacks) {
+      items.push(li("ok", `${tag("attack")} ${targetName(a.t)}`, a.ways.map(w => `<span class="way">${w}</span>`).join(""), tkey(a.t)));
     }
-    if (attacks.length > 4) items.push(li("more", `…and ${plural(attacks.length - 4, "more attack")}.`, ""));
     if (!attacks.length) items.push(li("info", "No attacks yet", "Nothing in your hand can destroy a rival card or ship right now. Building or cycling may help."));
     if (me.hand.length >= 3) items.push(li("ok", tag("cycle"), "Discard any 3 and draw 3 new ones. Good for getting rid of cards you can't use."));
     items.push(li("ok", tag("pass"), "You can always end your turn without doing anything."));
@@ -2732,7 +2956,7 @@
     else if (!yourTurn) {
       body = me.out
         ? `<p class="lead">You're out of this game. You can watch the rivals finish it below.</p>`
-        : `<p class="lead"><b>${current.human ? "Your turn is loading" : current.name + " is taking a turn."}</b> Each move is explained below as it happens.</p>
+        : `<p class="lead"><b>${current.human ? "Your turn is loading" : current.name + " is taking a turn."}</b> Markers on the board show what each captain did.</p>
            <p>Hover over any card or ship to see what it takes to destroy it.</p>`;
     } else if (G.mode === "draw") {
       body = `<p class="lead"><b>Step 1: Draw.</b> Every turn starts by drawing 1 card. Then you choose one action.</p>
@@ -2752,9 +2976,7 @@
     } else {
       body = `<p class="lead"><b>${plural(sel.length, "card")} selected:</b> ${tint(labels(sel))}</p>${selectionHTML(me, sel, false)}`;
     }
-    const why = G.why.slice(0, 6).map(w =>
-      `<li${w.suit ? ` style="--sc: var(--s-${w.suit})"` : ""}>${tint(w.text)}</li>`).join("");
-    return `<h2>Tutorial</h2>${body}${why ? `<h3>Moves explained</h3><ul class="opts why">${why}</ul>` : ""}`;
+    return `<h2>Tutorial</h2>${body}`;
   }
 
   function paintCoach(yourTurn) {
