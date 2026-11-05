@@ -86,6 +86,7 @@
   }
 
   body {
+    margin: 0;
     background:
       radial-gradient(ellipse 50% 35% at 15% 8%, var(--stain), transparent 70%),
       radial-gradient(ellipse 40% 30% at 88% 65%, var(--stain), transparent 70%),
@@ -194,8 +195,13 @@
     color: var(--water-ink);
   }
   .rivals { display: flex; flex-wrap: wrap; justify-content: space-evenly; align-items: flex-start; gap: 22px 30px; }
-  .midsea { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px 26px; }
-  .home { display: flex; justify-content: center; margin-top: auto; }
+  /* Your row: piles on the left, your harbor in the middle, the logbook on the right.
+     fitBoard() shrinks the board until it all fits, so this row only wraps when there's height to spare. */
+  .homerow { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 14px 30px; margin-top: auto; }
+  .midsea { display: flex; justify-content: center; align-items: center; gap: 14px; }
+  .home { display: flex; justify-content: center; min-width: 0; }
+  .logdesk { display: flex; justify-content: center; }
+  .row-break { display: none; }
 
   /* Each captain's waters: a pennant, their face-down hand, then island and fleet side by side */
   .territory {
@@ -246,7 +252,16 @@
   .fan-row .meta { font-size: 0.8rem; opacity: 0.85; }
   /* What's left of an island: rocks in the surf */
   .shoal { display: grid; justify-items: center; gap: 2px; padding: 4px 8px; font-size: 0.78rem; font-style: italic; opacity: 0.85; }
-  .shoal svg { width: 78px; height: 30px; }
+  .shoal .ruins { width: 120px; height: 52px; overflow: visible; }
+  /* Island buildings sit in a strip on the island's right; the dock reaches out into the water */
+  .isle.stage-2, .isle.stage-3, .isle.stage-4 { padding-right: 52px; }
+  .isle.stage-3, .isle.stage-4 { margin-right: 46px; }
+  .isle.stage-4 { margin-top: 30px; }
+  .isle .hut { position: absolute; right: 9px; bottom: 9px; width: 38px; height: 32px; }
+  .isle .hut.small { right: 14px; bottom: auto; top: 8px; width: 28px; height: 24px; }
+  .isle .dock { position: absolute; right: -50px; bottom: 4px; width: 62px; height: 29px; }
+  .isle .tower { position: absolute; right: 10px; bottom: 38px; width: 30px; height: 64px; }
+  .isle .jolly { position: absolute; left: 21px; bottom: 50px; width: 18px; height: 24px; }
 
   /* Mid-channel: the draw pile, the discard pile and the latest news */
   .pile { display: grid; justify-items: center; gap: 4px; font: inherit; color: var(--water-ink); background: none; border: 0; padding: 0; }
@@ -259,29 +274,69 @@
   button.pile:not(:disabled) .stack { animation: beckon 1.4s ease-in-out infinite; }
   @keyframes beckon { 50% { filter: drop-shadow(0 0 8px var(--glow)); transform: translateY(-3px); } }
   .slot { width: 3.3rem; height: 4.6rem; box-sizing: border-box; border: 2px dashed rgba(255, 255, 255, 0.35); border-radius: 7px; }
-  /* The last round at a glance: a fixed height so nothing below it moves, scrolled to the newest line */
+  /* The ship's logbook: an open book on a leather cover, with an inkwell and quill beside it.
+     The left page names the round and who's at the helm; the right page is the last round, newest at the bottom. */
+  .logbook {
+    position: relative;
+    display: grid;
+    grid-template-columns: 8.6rem 18.5rem;
+    height: 8.6rem;
+    margin: 6px 34px 8px 8px;
+    color: var(--ink);
+    filter: drop-shadow(0 7px 10px rgba(0, 10, 20, 0.45));
+  }
+  /* The leather cover, peeking out around the pages */
+  .logbook::before {
+    content: ""; position: absolute; inset: -6px -7px -8px; z-index: -1; border-radius: 7px;
+    background: linear-gradient(180deg, #6b3f1d, #4a2a12); box-shadow: inset 0 0 0 1px #2c1708;
+  }
+  .page { position: relative; min-height: 0; box-sizing: border-box; padding: 8px 10px; }
+  .page.left {
+    border-radius: 5px 0 0 5px; display: grid; align-content: start; gap: 4px; text-align: center;
+    background: linear-gradient(90deg, var(--panel-2) 0%, var(--panel) 30%, var(--panel) 80%, var(--panel-2) 100%);
+    box-shadow: inset -12px 0 12px -10px rgba(40, 20, 0, 0.45);
+  }
+  .page.right {
+    border-radius: 0 5px 5px 0; padding: 6px 8px 6px 12px;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 1.17rem, var(--chart-line) 1.17rem calc(1.17rem + 1px)),
+      linear-gradient(90deg, var(--panel-2) 0%, var(--panel) 14%, var(--panel) 100%);
+    box-shadow: inset 12px 0 12px -10px rgba(40, 20, 0, 0.45);
+  }
+  .page.left h3 { font-size: 1.3rem; line-height: 1; color: var(--brass); }
+  .page.left h3::after { content: ""; display: block; height: 3px; margin: 4px 10px 0; border-radius: 2px; background: repeating-linear-gradient(-55deg, var(--rope) 0 3px, var(--rope-2) 3px 5px); }
+  .page.left .round { font-family: var(--f-log); font-style: italic; font-size: 0.92rem; }
+  .page.left .helm { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-top: 2px; }
+  .page.left .helm-chip {
+    justify-self: center; display: inline-flex; align-items: center; gap: 4px; max-width: 100%; box-sizing: border-box;
+    padding: 1px 8px 2px; border-radius: 999px; background: var(--sc); color: var(--bg);
+    font-family: var(--f-display); font-size: 0.95rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* Inkwell and quill, leaning against the book's right edge. The quill twitches when a new line is written. */
+  .quill { position: absolute; right: -40px; bottom: -10px; width: 46px; height: 74px; pointer-events: none; }
+  .quill .feather { transform-box: view-box; transform-origin: 22px 56px; }
+  .logbook.inking .quill .feather { animation: scribble 0.9s ease-in-out; }
+  @keyframes scribble { 20% { transform: rotate(-7deg); } 45% { transform: rotate(4deg); } 70% { transform: rotate(-3deg); } }
   .ticker {
-    flex: 1 1 420px;
-    max-width: 560px;
-    height: 9.6rem;
+    height: 100%;
     overflow-y: auto;
     margin: 0;
-    padding: 8px 12px;
+    padding: 0 2px 0 0;
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 3px;
-    background: var(--panel);
-    color: var(--ink);
-    border-radius: 4px;
     font-family: var(--f-log);
     font-style: italic;
-    font-size: 0.9rem;
+    font-size: 0.84rem;
     line-height: 1.3;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35), inset 0 0 0 3px var(--panel), inset 0 0 0 4px var(--frame);
     scrollbar-width: thin;
   }
-  .ticker li { padding-left: 8px; border-left: 3px solid var(--sc, var(--frame)); }
+  .ticker li { padding-left: 7px; border-left: 3px solid var(--sc, var(--frame)); }
+  /* Fresh ink: a new line soaks into the page */
+  .ticker li.ink { animation: ink-in 0.9s ease-out both; }
+  @keyframes ink-in { from { opacity: 0; filter: blur(2px); transform: translateX(-4px); } }
+  .still .ticker li.ink, .still .logbook .feather { animation: none; }
   .ticker li:first-child { margin-top: auto; }
   .ticker li.old { opacity: 0.55; }
   .ticker li.hit { border-left-color: var(--danger); font-weight: 700; }
@@ -566,6 +621,20 @@
     50% { transform: translateY(-1px) rotate(1.8deg); }
     75% { transform: translateY(2px) rotate(0deg); }
   }
+  /* Fires on a damaged ship: flickering flames and smoke curling up */
+  .ship-art { overflow: visible; }
+  .ship-art .flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flicker 0.45s ease-in-out var(--fd, 0s) infinite alternate; }
+  .ship-art .flame.core { animation-duration: 0.3s; }
+  @keyframes flicker { from { transform: scaleY(0.82) skewX(-5deg); } to { transform: scaleY(1.15) skewX(6deg); } }
+  svg .smoke { fill: rgba(60, 52, 48, 0.55); transform-box: fill-box; transform-origin: center; animation: smoke-rise 2.4s ease-out var(--fd, 0s) infinite; }
+  svg .smoke.s2 { animation-delay: calc(var(--fd, 0s) - 1.2s); }
+  @keyframes smoke-rise {
+    0% { transform: translate(0, 8px) scale(0.5); opacity: 0; }
+    20% { opacity: 0.85; }
+    100% { transform: translate(7px, -24px) scale(2.3); opacity: 0; }
+  }
+  .ship-art.burning { filter: drop-shadow(0 0 6px rgba(255, 120, 40, 0.45)); }
+  .still .ship-art .flame, .still svg .smoke { animation: none; }
   .ship-name { font-family: var(--f-display); font-size: 1.15rem; line-height: 1; }
   .ship-meta { font-size: 0.78rem; opacity: 0.85; font-variant-numeric: tabular-nums; }
   .pips { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
@@ -581,7 +650,14 @@
   .fx { position: fixed; inset: 0; z-index: 12; pointer-events: none; overflow: hidden; }
   .flyer { position: absolute; left: 0; top: 0; will-change: transform; }
   .flyer .card, .flyer .back { width: 3.3rem; height: 4.6rem; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35); }
-  .ball { display: block; width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #7a7a7a, #121212 70%); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+  .ball { display: block; width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 32%, #9a9a9a 0%, #4a4a4a 30%, #121212 70%); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.55); }
+  /* Powder smoke left behind a cannonball in flight */
+  .puff {
+    position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(225, 225, 215, 0.55), rgba(200, 200, 190, 0) 70%);
+    animation: puff 0.7s ease-out forwards;
+  }
+  @keyframes puff { to { transform: scale(2.6) translateY(-4px); opacity: 0; } }
   .burst { position: absolute; width: 0; height: 0; }
   .burst i { position: absolute; left: 0; top: 0; border-radius: 50%; transform: translate(-50%, -50%); }
   .burst .flash { width: 80px; height: 80px; background: radial-gradient(circle, #fff7d6 0%, #ffbf55 30%, rgba(214, 84, 30, 0.7) 55%, transparent 70%); animation: blast 0.55s ease-out forwards; }
@@ -591,6 +667,13 @@
   .burst .drop { width: 6px; height: 6px; background: #eafcff; animation: drop 0.65s ease-out forwards; }
   .burst .spark { width: 6px; height: 6px; background: #ffd77a; box-shadow: 0 0 6px #ffcf5a; animation: drop 0.6s ease-out forwards; }
   .burst.radar .ring { border-color: #8fe3a2; animation-duration: 1.1s; }
+  .burst .steam { width: 46px; height: 46px; background: radial-gradient(circle, rgba(245, 248, 250, 0.85), rgba(235, 240, 245, 0) 65%); animation: steam 1.3s ease-out forwards; }
+  .burst .steam:nth-child(2) { animation-delay: 0.12s; }
+  .burst .steam:nth-child(3) { animation-delay: 0.24s; }
+  @keyframes steam {
+    from { transform: translate(calc(-50% + var(--sx)), -40%) scale(0.4); opacity: 0.95; }
+    to { transform: translate(calc(-50% + var(--sx) * 1.6), -160%) scale(2); opacity: 0; }
+  }
   .burst.gold .ring { border-color: #ffd77a; }
   @keyframes blast { from { transform: translate(-50%, -50%) scale(0.2); opacity: 1; } to { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
   @keyframes smoke { from { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; } to { transform: translate(-50%, -80%) scale(1.6); opacity: 0; } }
@@ -756,6 +839,18 @@
   .title-actions .btn[aria-pressed="true"] { background: rgba(233, 180, 80, 0.25); }
   .still .title-screen::before { animation: none; }
 
+  /* ---------- Fit to the screen ---------- */
+  /* On anything wider than a phone, the page is exactly one screen tall: the sea fills the space between
+     the top bar and your hand, and fitBoard() scales its contents (--u) so your harbor is never hidden.
+     Phones keep the old scrolling page. */
+  #rivals, #midsea, #you, #logdesk { zoom: var(--u, 1); }
+  @media (min-width: 600px) {
+    .app { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+    .waters { grid-template-rows: minmax(0, 1fr); }
+    .sea { min-height: 0; overflow: hidden auto; scrollbar-width: thin; }
+    .tray { position: relative; }
+  }
+
   /* ---------- Last-move markers ---------- */
   /* Small badges in the color of the captain who acted. They stay until that captain's next turn. */
   .ship { position: relative; }
@@ -911,6 +1006,20 @@
   .tip b { display: block; }
   .tip.ok { border-left-color: var(--s-C); }
   .tip.no { border-left-color: var(--danger); }
+
+  /* On short screens the hand tray gets more compact, leaving more height for the sea.
+     (Kept late in the sheet so it wins over the tray's regular sizes.) */
+  @media (min-width: 600px) and (max-height: 820px) {
+    .tray { gap: 2px; padding-top: 4px; padding-bottom: 6px; }
+    .tray .hint { height: 1.45em; }
+    .tray .hint span { -webkit-line-clamp: 1; }
+    .hand { padding: 12px 0 2px; min-height: 4.5rem; }
+    .hand > .card { width: 3.15rem; height: 4.4rem; margin-left: clamp(-2.2rem, calc((100cqw - var(--n) * 3.15rem) / max(1, var(--n) - 1)), 0.3rem); }
+    .hand > .card:first-child { margin-left: 0; }
+    .tray .actions { height: 34px; }
+    .tray .actions .btn { padding: 5px 12px; font-size: 0.88rem; }
+    .topbar { padding-block: 5px; }
+  }
   /* Board highlights for your selection: bright green for what you can do, red dashes for near misses */
   .hint-ok { outline: 3px solid #23a04a; outline-offset: 2px; box-shadow: 0 0 0 5px rgba(150, 240, 170, 0.55), 0 0 16px 4px rgba(120, 230, 150, 0.6); }
   .isle.hint-ok { outline-offset: 15px; border-radius: 38px 56px 44px 30px / 30px 40px 46px 36px; }
@@ -962,8 +1071,13 @@
     <div class="waters">
       <main class="sea">
         <div class="rivals" id="rivals"></div>
-        <div class="midsea" id="midsea"></div>
-        <div class="home" id="you"></div>
+        <!-- Your row: the draw and discard piles, your harbor, and the ship's logbook -->
+        <div class="homerow">
+          <div class="midsea" id="midsea"></div>
+          <div class="home" id="you"></div>
+          <span class="row-break"></span>
+          <div class="logdesk" id="logdesk"></div>
+        </div>
       </main>
       <!-- Tutorial mode: your options right now, and the rule behind each one -->
       <aside class="coach panel" id="coach" aria-label="Tutorial" aria-live="polite"></aside>
@@ -1316,6 +1430,12 @@
           tone(rnd(240, 560), { t: t + 0.55 + i * rnd(0.08, 0.17), dur: 0.09, vol: 0.07, to: rnd(700, 1300), rev: 0.3 });
         }
       },
+      // Water thrown on a fire: a sharp hiss that fades to a soft sizzle
+      hiss: t => {
+        noise({ t, dur: 1.1, vol: 0.3, type: "highpass", freq: 4200, to: 2600, attack: 0.01, rev: 0.25 });
+        noise({ t: t + 0.05, dur: 0.8, vol: 0.18, freq: 1800, to: 900, q: 0.8, rev: 0.2 });
+        for (let i = 0; i < 6; i++) noise({ t: t + rnd(0.2, 0.9), dur: 0.04, vol: 0.08, type: "highpass", freq: rnd(3000, 6000), rev: 0.1 });
+      },
       // A sonar ping with a long fading tail
       radar: t => [0, 0.65].forEach((d, i) => tone(1420, { t: t + d, dur: 0.55, vol: 0.16 / (i + 1), rev: 0.9, ech: 0.4 })),
       // A ship's bell: a struck note with clanging overtones, rung twice
@@ -1449,7 +1569,7 @@
     shuffle(deck);
     for (let k = 0; k < 7; k++) for (const p of players) p.hand.push(deck.pop());
     players.forEach(sortHand);
-    G = { players, deck, discard: [], turn: 0, mode: "wait", selected: new Set(), log: [], logCount: 0, turnStarts: [], over: false, fresh: new Set(), marks: [],
+    G = { players, deck, discard: [], turn: 0, mode: "wait", selected: new Set(), log: [], logCount: 0, turnStarts: [], over: false, fresh: new Set(), marks: [], round: 1, inkedTo: 0,
       stats: { turns: 0, launched: 0, destroyed: 0, sunk: 0 } };
     log(`A new voyage begins. You sail under ${SUITS[mySuit].name} against ${rivals} rival captain${rivals > 1 ? "s" : ""}.`);
     $("#title").hidden = true;
@@ -1570,6 +1690,7 @@
   function reinforce(p, ship, cards) {
     removeFromHand(p, cards);
     ship.cards.push(...cards);
+    ship.peak = Math.max(ship.peak || 0, ship.cards.length);
     Sound.play("launch");
     log(`${who(p)} reinforced ${poss(p)} ${shipName(ship)} with ${cards.map(cardLabel).join(" + ")}, bringing it to ${ship.cards.length} cards.`, p);
     markMove("plus", p, p, { ship: ship.id, n: cards.length });
@@ -1586,7 +1707,8 @@
 
   function launch(p, cards, ability) {
     removeFromHand(p, cards);
-    const ship = { id: ++uid, cards, ability, suit: cards[0].suit };
+    // `peak` is the most cards the ship has ever had; each card missing below it is a fire on deck
+    const ship = { id: ++uid, cards, ability, suit: cards[0].suit, peak: cards.length };
     p.ships.push(ship);
     Sound.play("launch");
     log(`${who(p)} launched a ${shipName(ship)} with ${cards.length} cards.`, p);
@@ -1733,11 +1855,35 @@
       $("#fx").appendChild(el);
       const a = mid(from), b = mid(to);
       const at = (x, y, r, s) => `translate(${x}px, ${y}px) translate(-50%, -50%) rotate(${r}deg) scale(${s})`;
-      const anim = el.animate([
-        { transform: at(a.x, a.y, 0, 1) },
-        { transform: at((a.x + b.x) / 2, (a.y + b.y) / 2 - arc, spin / 2, 1.08), offset: 0.5 },
-        { transform: at(b.x, b.y, spin, scale) }
-      ], { duration: dur, delay, easing: "ease-in-out", fill: "both" });
+      const isBall = html.includes("ball");
+      // Cards swoop in three steps; cannonballs follow a true arc, growing a little at the top as if nearer
+      const frames = isBall
+        ? Array.from({ length: 17 }, (_, i) => {
+            const k = i / 16, lift = 4 * k * (1 - k);
+            return { transform: at(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k - arc * lift, 0, 1 + 0.35 * lift) };
+          })
+        : [
+            { transform: at(a.x, a.y, 0, 1) },
+            { transform: at((a.x + b.x) / 2, (a.y + b.y) / 2 - arc, spin / 2, 1.08), offset: 0.5 },
+            { transform: at(b.x, b.y, spin, scale) }
+          ];
+      if (isBall) el.style.visibility = "hidden";
+      const anim = el.animate(frames, { duration: dur, delay, easing: isBall ? "linear" : "ease-in-out", fill: "both" });
+      // A cannonball leaves a trail of powder smoke behind it
+      if (isBall) {
+        setTimeout(() => { el.style.visibility = ""; }, delay);
+        const trail = setInterval(() => {
+          if (!el.isConnected) return clearInterval(trail);
+          const r = el.getBoundingClientRect();
+          const puff = document.createElement("i");
+          puff.className = "puff";
+          puff.style.left = `${r.left + r.width / 2}px`;
+          puff.style.top = `${r.top + r.height / 2}px`;
+          $("#fx").appendChild(puff);
+          setTimeout(() => puff.remove(), 700);
+        }, 45);
+        setTimeout(() => clearInterval(trail), delay + dur + 50);
+      }
       return done(anim, dur + delay).then(() => el.remove());
     }
 
@@ -1758,6 +1904,7 @@
         splash: `<i class="ring"></i><i class="ring"></i>${bits("drop", 8, 32)}`,
         gold: `<i class="ring"></i>${bits("spark", 6, 24)}`,
         radar: `<i class="ring"></i><i class="ring"></i>`,
+        steam: `<i class="steam" style="--sx:-14px"></i><i class="steam" style="--sx:0px"></i><i class="steam" style="--sx:14px"></i>`,
         muzzle: `<i class="smoke"></i><i class="flash" style="width:46px;height:46px"></i>`
       }[kind];
       $("#fx").appendChild(el);
@@ -1804,8 +1951,13 @@
 
     api.reinforce = async (p, ship, cards) => {
       const to = R(shipEl(ship));
+      // Repairs put fires out: a hiss and a cloud of steam for each one doused
+      const doused = shipFires(ship) - shipFires(ship, cards.length);
       await Promise.all(cards.map((c, i) => fly(cardHTML(c), fromHand(p, c), to, { dur: 500, delay: i * 90, arc: 60 })));
-      burst(to, "gold");
+      if (doused > 0) {
+        Sound.play("hiss");
+        burst(to, "steam");
+      } else burst(to, "gold");
     };
 
     api.cycle = async (p, cards) => {
@@ -1830,7 +1982,7 @@
       burst(gun, "muzzle");
       const shots = Math.min(cards.length, 4);
       await Promise.all(Array.from({ length: shots }, (_, i) =>
-        fly(`<i class="ball"></i>`, gun, tr, { dur: 560, delay: i * 130, arc: 110 })));
+        fly(`<i class="ball"></i>`, gun, tr, { dur: 850, delay: i * 210, arc: 150 })));
       Sound.play(impact);
       if (t.kind === "island") {
         burst(tr, "boom");
@@ -1943,7 +2095,9 @@
 
   function endTurn() {
     if (checkWin()) return;
+    const was = G.turn;
     do { G.turn = (G.turn + 1) % G.players.length; } while (G.players[G.turn].out);
+    if (G.turn <= was) G.round++;
     G.mode = "wait";
     render();
     const game = G;
@@ -2339,7 +2493,7 @@
   }
 
   // The centre log shows one full round: every turn since the current captain's previous turn, which is faded
-  function tickerHTML() {
+  function tickerHTML(inkFrom = Infinity) {
     const k = alive().length + 1;
     const starts = G.turnStarts;
     const from = starts.length >= k ? starts[starts.length - k] : 0;
@@ -2349,7 +2503,7 @@
     const hitsYou = e => e.tp !== 0 && (e.suit === me.suit || /\byour\b/.test(e.msg));
     const entries = G.log.filter(e => e.n > from).reverse();
     return entries.map((e, i) => {
-      const cls = [e.n <= fadeTo ? "old" : "", hitsYou(e) ? "hit" : "", i && e.t !== entries[i - 1].t ? "turn-start" : ""].join(" ").trim();
+      const cls = [e.n <= fadeTo ? "old" : "", hitsYou(e) ? "hit" : "", i && e.t !== entries[i - 1].t ? "turn-start" : "", e.n > inkFrom ? "ink" : ""].join(" ").trim();
       return `<li class="${cls}"${e.suit ? ` style="--sc: var(--s-${e.suit})"` : ""}>${tint(e.msg)}</li>`;
     }).join("");
   }
@@ -2529,13 +2683,34 @@
       radar: `<circle cx="${mid}" cy="3" r="2.5" fill="${color}"/><path d="M${mid + 5} -1 a5 5 0 0 1 0 8 M${mid + 8} -3 a8 8 0 0 1 0 12 M${mid - 5} -1 a5 5 0 0 0 0 8 M${mid - 8} -3 a8 8 0 0 0 0 12" stroke="${color}" stroke-width="1.3" fill="none"/>`
     }[ship.ability];
     const flag = ship.ability === "radar" ? "" : `<path d="M${mid} 4 l13 3.5 l-13 3.5Z" fill="${color}"/>`;
-    return `<svg class="ship-art" viewBox="0 -4 120 70" aria-hidden="true">
-      ${rig}${flag}
+    // Battle damage: scorched holes in the sails and hull, and a fire on deck for each card lost (up to 3)
+    const fires = shipFires(ship);
+    const scorch = xs.slice(0, fires).map((x, i) => {
+      const top = x === mid ? 4 : 10;
+      return `<path d="M${x + 3} ${top + 24} l3 -2 l2 3 l3 0 l-1 3 l2 3 l-3 1 l-2 3 l-2 -3 l-3 0 l1 -3 Z" fill="#2b1a0c" stroke="#6b3a12" stroke-width=".8"/>` +
+        (i === 0 ? `<path d="M${x - 8} ${top + 9} l2 -1 l1 2 l2 0 l-1 2 l1 2 l-2 0 l-1 2 l-1 -2 l-2 0 Z" fill="#2b1a0c"/>` : "");
+    }).join("");
+    const FIRE_X = [24, 97, 66];
+    const flames = FIRE_X.slice(0, fires).map((x, i) => `
+      <path d="M${x - 4} 51 l3 -2 l2 3 l3 -1 l-1 3 l-4 1 Z" fill="#1a1008"/>
+      <g class="fire" transform="translate(${x} 46)" style="--fd: ${(-i * 0.37).toFixed(2)}s">
+        <circle class="smoke" cx="0" cy="-16" r="3.5"/><circle class="smoke s2" cx="1" cy="-16" r="3"/>
+        <path class="flame" d="M0 0 C-5 -2 -6 -8 -2 -15 C-1 -10 2 -11 1 -6 C3 -8 5 -10 4 -13 C8 -7 6 -1 0 0Z" fill="#ee6b1f"/>
+        <path class="flame core" d="M0 0 C-3 -1 -3 -5 0 -9 C3 -5 3 -1 0 0Z" fill="#ffd45e"/>
+      </g>`).join("");
+    return `<svg class="ship-art${fires ? " burning" : ""}" viewBox="0 -4 120 70" aria-hidden="true">
+      ${rig}${flag}${scorch}
       <path d="M3 42 Q10 47 17 47 H104 Q111 47 117 42 L103 60 Q60 64 17 60 Z" fill="var(--hull)"/>
       <path d="M12 50 H108" stroke="${color}" stroke-width="2"/>
-      ${detail}
+      ${detail}${flames}
       <path d="M0 60 Q7.5 56 15 60 T30 60 T45 60 T60 60 T75 60 T90 60 T105 60 T120 60 V66 H0Z" fill="var(--water-2)" fill-opacity=".8"/>
     </svg>`;
+  }
+
+  // How many fires burn on a ship: one per card it has lost since its biggest size, up to 3.
+  // `adding` asks how many would still burn after that many cards are added.
+  function shipFires(ship, adding = 0) {
+    return ship.peak ? Math.max(0, Math.min(3, ship.peak - ship.cards.length - adding)) : 0;
   }
 
   function shipHTML(ship, owner, targetable, refit) {
@@ -2552,25 +2727,82 @@
     </${tag}>`;
   }
 
-  const ROCKS = `<svg viewBox="0 0 78 30" aria-hidden="true">
-    <path d="M6 26 Q12 12 22 16 Q26 8 34 14 L40 26Z" fill="#5d5a55"/>
-    <path d="M38 26 Q44 15 52 18 Q58 10 66 19 L72 26Z" fill="#6c6862"/>
-    <path d="M24 16 Q28 12 32 15 M50 18 Q55 13 60 15" stroke="#8d8880" stroke-width="1.5" fill="none"/>
-    <path d="M1 27 Q10 23 20 27 T39 27 T58 27 T77 27" stroke="white" stroke-opacity=".7" stroke-width="2" fill="none"/>
+  // An inkwell of dark glass with a brass rim, and a feather quill leaning out of it
+  const QUILL = `<svg class="quill" viewBox="0 0 46 74" aria-hidden="true">
+    <g class="feather">
+      <path d="M22 56 L43 3" stroke="#8a7350" stroke-width="1.3" stroke-linecap="round"/>
+      <path d="M26 46 C24 34 31 16 43 3 C42 18 37 34 29 47 Z" fill="#f6eedb" stroke="#b9a77f" stroke-width=".8"/>
+      <path d="M28 40 L34 37 M30 34 L37 30 M33 27 L39 23 M35 20 L41 15 M27 44 L25 40 M29 38 L27 33 M31 31 L30 26" stroke="#c9b88f" stroke-width=".6"/>
+    </g>
+    <path d="M9 57 h26 l3 4 v9 q0 4 -4 4 h-24 q-4 0 -4 -4 v-9 Z" fill="#1d2833"/>
+    <path d="M12 60 q2 6 0 11" stroke="rgba(255,255,255,.35)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <rect x="13" y="52.5" width="18" height="5" rx="1.5" fill="#c99a3a" stroke="#7a5714" stroke-width=".7"/>
   </svg>`;
+
+  // What's left of a lost island: a half-sunk mound, charred palm stumps, a broken hut and smoke curling up
+  const RUINS = `<svg class="ruins" viewBox="0 0 120 52" aria-hidden="true">
+    <circle class="smoke" cx="40" cy="20" r="4" style="--fd:0s"/><circle class="smoke s2" cx="42" cy="20" r="3.5" style="--fd:-.6s"/>
+    <circle class="smoke" cx="78" cy="22" r="3.5" style="--fd:-1.4s"/>
+    <path d="M14 44 Q30 30 52 33 Q70 27 94 34 Q104 37 108 44 Z" fill="var(--sand-2)"/>
+    <path d="M26 42 Q40 34 56 36 Q70 31 88 37 Q96 40 98 43 Z" fill="#6f5a3a" opacity=".55"/>
+    <path d="M34 40 L36 26 L39 25 L40 39 Z" fill="#2a1d12"/><path d="M36 26 l-4 -3 M38 25 l3 -4" stroke="#2a1d12" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M86 38 L87 30 L90 29 L90 37 Z" fill="#2a1d12"/>
+    <path d="M58 37 L64 24 M72 36 L66 23 M60 31 L73 29" stroke="#4a3018" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M62 24 L70 22 L76 27" stroke="#6b4a24" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="48" cy="38" r="1.3" fill="#ff8a3a" opacity=".85"/><circle cx="66" cy="35" r="1.1" fill="#ff8a3a" opacity=".8"/>
+    <path d="M0 44 Q8 40 16 44 T32 44 T48 44 T64 44 T80 44 T96 44 T112 44 T128 44 V52 H0Z" fill="var(--water-2)" fill-opacity=".85"/>
+    <path d="M0 44 Q8 40 16 44 T32 44 T48 44 T64 44 T80 44 T96 44 T112 44 T128 44" stroke="white" stroke-opacity=".6" stroke-width="1.6" fill="none"/>
+  </svg>`;
+
+  // Islands grow as they're fortified: huts at 4 cards, a second hut at 5, a dock with a rowboat at 6,
+  // a watchtower flying the captain's colors at 8. A Joker on the island flies the Jolly Roger.
+  const HUT = (cls = "") => `<svg class="hut ${cls}" viewBox="0 0 36 30" aria-hidden="true">
+    <rect x="7" y="14" width="22" height="14" fill="#b98a4e" stroke="var(--wood)" stroke-width="1"/>
+    <rect x="15" y="19" width="6" height="9" fill="var(--hull)"/>
+    <path d="M2 16 L18 3 L34 16 Z" fill="#cfa652" stroke="#8a6a2a" stroke-width="1"/>
+    <path d="M8 13 L18 5 M13 14 L20 7 M18 15 L24 9 M24 15 L28 12" stroke="#a7822f" stroke-width=".8"/>
+  </svg>`;
+  const DOCK = `<svg class="dock" viewBox="0 0 60 28" aria-hidden="true">
+    <path d="M10 12 V25 M24 12 V25 M38 12 V25" stroke="var(--hull)" stroke-width="2.4"/>
+    <rect x="0" y="9" width="44" height="4.5" rx="1" fill="#9a6a35" stroke="var(--hull)" stroke-width=".8"/>
+    <path d="M6 9.5 V13 M14 9.5 V13 M22 9.5 V13 M30 9.5 V13 M38 9.5 V13" stroke="var(--hull)" stroke-width=".6"/>
+    <path d="M36 19 H58 Q55 25 47 25 Q40 25 36 19 Z" fill="var(--hull)"/>
+    <path d="M38 19 H56" stroke="#b98a4e" stroke-width="1.2"/>
+    <path d="M42 15 L54 23" stroke="#c9a062" stroke-width="1.3" stroke-linecap="round"/>
+  </svg>`;
+  const TOWER = `<svg class="tower" viewBox="0 0 30 64" aria-hidden="true">
+    <path d="M15 4 V20" stroke="var(--wood)" stroke-width="1.4"/>
+    <path d="M15 4 L27 8 L15 12 Z" fill="var(--sc)"/>
+    <path d="M5 26 L15 17 L25 26 Z" fill="#cfa652" stroke="#8a6a2a" stroke-width="1"/>
+    <rect x="6" y="26" width="18" height="9" fill="#b98a4e" stroke="var(--wood)" stroke-width="1"/>
+    <rect x="12" y="28" width="6" height="4" fill="var(--hull)"/>
+    <path d="M8 35 L5 63 M22 35 L25 63 M7 44 L23 54 M23 44 L7 54" stroke="var(--wood)" stroke-width="2"/>
+  </svg>`;
+  const JOLLY = `<svg class="jolly" viewBox="0 0 20 26" aria-hidden="true">
+    <path d="M2 2 V26" stroke="var(--wood)" stroke-width="1.6"/>
+    <path d="M3 2 H19 L16 7 L19 12 H3 Z" fill="#15110c"/>
+    <circle cx="10" cy="6.5" r="2.3" fill="#f4ead2"/><path d="M7 10 L13 11 M13 10 L7 11" stroke="#f4ead2" stroke-width=".9"/>
+  </svg>`;
+
+  function islandDecor(p) {
+    const n = p.island.length;
+    return (n >= 4 ? HUT() : "") + (n >= 5 && n < 8 ? HUT("small") : "") + (n >= 6 ? DOCK : "") + (n >= 8 ? TOWER : "") +
+      (p.island.some(c => c.joker) ? JOLLY : "");
+  }
+  const islandStage = n => n >= 8 ? "stage-4" : n >= 6 ? "stage-3" : n >= 4 ? "stage-2" : "";
 
   // One captain's waters: their pennant, face-down hand (rivals), then island and fleet side by side
   function territoryHTML(p, targets, refit = []) {
     const isT = t => targets.some(x => x.owner === t.owner && (x.kind === "island" ? x.card === t.card : x.ship === t.ship));
     const arrive = key => G.fresh.has(key) ? "arrive" : "";
     const island = p.island.length
-      ? `<div class="isle" data-isle="${p.id}">${PALM}${p.island.map(card => {
+      ? `<div class="isle ${islandStage(p.island.length)}" data-isle="${p.id}">${PALM}${islandDecor(p)}${p.island.map(card => {
           const t = { kind: "island", owner: p, card };
           return isT(t)
             ? cardHTML(card, "button", `mini targetable ${arrive("c" + card.id)}`, `data-target="i:${p.id}:${card.id}"`)
             : cardHTML(card, "div", `mini ${arrive("c" + card.id)}`);
         }).join("")}</div>`
-      : `<div class="shoal" data-isle="${p.id}">${ROCKS}<span>Island lost</span></div>`;
+      : `<div class="shoal" data-isle="${p.id}">${RUINS}<span>Island lost</span></div>`;
     const ships = p.ships.map(ship => shipHTML(ship, p, isT({ kind: "ship", owner: p, ship }), refit.includes(ship))).join("");
     const n = p.hand.length;
     const current = !G.over && G.turn === p.id;
@@ -2610,8 +2842,23 @@
         ${top ? cardHTML(top) : `<span class="slot"></span>`}
         <span class="pile-label">Discard · ${G.discard.length}</span>
       </div>
-      <ul class="ticker" aria-label="This round">${tickerHTML()}</ul>`;
-    const ticker = $("#midsea .ticker");
+`;
+    // The logbook: lines logged since the last redraw are written in fresh ink
+    const inkFrom = G.inkedTo;
+    G.inkedTo = G.logCount;
+    const inking = G.logCount > inkFrom;
+    $("#logdesk").innerHTML = `
+      <div class="logbook ${inking ? "inking" : ""}">
+        <div class="page left">
+          <h3>Ship's Log</h3>
+          <span class="round">Round ${G.round}</span>
+          ${G.over ? `<span class="helm">The battle is over</span>` : `<span class="helm">At the helm</span>
+            <span class="helm-chip" style="--sc: var(--s-${current.suit})">${SUITS[current.suit].sym} ${current.human ? "You" : current.name.replace("Captain ", "Capt. ")}</span>`}
+        </div>
+        <div class="page right"><ul class="ticker" aria-label="This round">${tickerHTML(inkFrom)}</ul></div>
+        ${QUILL}
+      </div>`;
+    const ticker = $("#logdesk .ticker");
     ticker.scrollTop = ticker.scrollHeight;
 
     // Your hand tray
@@ -2697,6 +2944,7 @@
 
     // Tutorial panel, and a hover bubble that follows its card or ship through the redraw
     paintMarks();
+    fitBoard();
     paintCoach(yourTurn);
     paintHints(yourTurn);
     if (!$("#tip").hidden) {
@@ -2705,6 +2953,39 @@
       else hideTip();
     }
   }
+
+  // ---------- Fit the board to the screen ----------
+  // Picks the largest scale (--u, between 0.6 and 1.5) at which the whole sea fits between the top bar
+  // and your hand. It only re-measures when the board's shape changes (cards, ships, wrecks, players out,
+  // the tutorial panel, the window size), so selecting cards never makes the board jump.
+
+  let fitSig = "";
+  const setU = u => document.documentElement.style.setProperty("--u", u.toFixed(3));
+
+  function fitBoard(force) {
+    if (!G) return;
+    if (innerWidth < 600) { setU(1); fitSig = ""; return; }
+    const sig = [innerWidth, innerHeight, Tutor.on, G.marks.filter(m => m.type === "wreck" || m.type === "sunk").length,
+      ...G.players.map(p => `${p.out}:${p.island.length}:${p.ships.map(s => s.cards.length).join(",")}`)].join("|");
+    if (!force && sig === fitSig) return;
+    fitSig = sig;
+    const sea = $("#board .sea");
+    const fits = u => { setU(u); return sea.scrollHeight <= sea.clientHeight + 6; };
+    let lo = 0.6, hi = 1.5;
+    if (fits(hi)) return;
+    for (let i = 0; i < 7; i++) {
+      const m = (lo + hi) / 2;
+      if (fits(m)) lo = m; else hi = m;
+    }
+    // Wrapping can make a size that "fit" a moment ago overflow; step down until it truly fits
+    while (!fits(lo) && lo > 0.6) lo = Math.max(0.6, lo - 0.04);
+  }
+
+  let fitTimer = 0;
+  const refit = () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitBoard(true), 120); };
+  addEventListener("resize", refit);
+  // The game's fonts arrive after the first layout and change text widths, so measure again then
+  if (document.fonts) document.fonts.ready.then(refit);
 
   // ---------- Last-move markers ----------
   // Every move leaves a small badge on the board in the acting captain's color: New, +2, −2, a scorched
